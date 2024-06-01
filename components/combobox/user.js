@@ -23,10 +23,18 @@ import { useUserContext } from "../context/user"
 import { USERS } from "@/constants/enum"
 
 export function UserCombobox({ userId, onSelect, onlyEmployee }) {
-  const { data } = useUserContext()
+
+
+  const [temporerEmployee,setTemporerEmployee] = React.useState()
+
+  const { data ,triggerRefetch} = useUserContext()
   const [open, setOpen] = React.useState(false)
 
   const user = data.find((user) => user.uid === userId)
+
+  const temporerOne= data.find((user) => user.uid === temporerEmployee)
+
+  console.log(temporerOne,"temporer")
 
   const finalData = onlyEmployee
     ? data.filter((user) => user.role === USERS.EMPLOYEE)
@@ -41,7 +49,7 @@ export function UserCombobox({ userId, onSelect, onlyEmployee }) {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {user ? user.email : "Select emploee..."}
+          {user &&  temporerOne?.email ? temporerOne?.email : user.email}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -58,6 +66,7 @@ export function UserCombobox({ userId, onSelect, onlyEmployee }) {
                   onSelect={(currentValue) => {
                     onSelect(currentValue === userId ? "" : currentValue)
                     setOpen(false)
+                    setTemporerEmployee(currentValue)
                   }}
                 >
                   <Check
