@@ -127,7 +127,7 @@ export function TaskCard({ task, isOverlay, onClick }) {
           </DropdownMenu>
         </CardHeader>
         <CardContent className="px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
-          {task.content}
+          {task.name}
         </CardContent>
       </Card>
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>

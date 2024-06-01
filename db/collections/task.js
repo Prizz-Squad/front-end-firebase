@@ -7,6 +7,7 @@ import {
   getDocs,
   onSnapshot,
   setDoc,
+  updateDoc,
 } from "firebase/firestore"
 
 const coll = collection(db, "tasks")
@@ -37,8 +38,8 @@ export const changeTaskStatus = async (id, status) => {
   await setDoc(doc(coll, id), { status })
 }
 
-export const changeTaskDepartment = async (id, department) => {
-  await setDoc(doc(coll, id), { department })
+export const changeTaskColId = async (id, columnId) => {
+  await updateDoc(doc(coll, id), { columnId })
 }
 
 export const getTasksSnapshot = async (callback) => {

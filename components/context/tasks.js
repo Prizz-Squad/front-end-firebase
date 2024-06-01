@@ -1,6 +1,4 @@
-import { getProjects } from "@/db/collections/project"
 import { getTasks, getTasksSnapshot } from "@/db/collections/task"
-import { get } from "react-hook-form"
 
 const { createContext, useContext, useState, useEffect } = require("react")
 
@@ -31,7 +29,13 @@ export const TaskCtxProvider = ({ children }) => {
 
   return (
     <TaskCtx.Provider
-      value={{ data, triggerRefetch, snapshotData, addNewProject }}
+      value={{
+        data,
+        triggerRefetch,
+        snapshotData,
+        addNewProject,
+        setSnapshotData,
+      }}
     >
       {children}
     </TaskCtx.Provider>

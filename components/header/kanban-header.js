@@ -29,7 +29,7 @@ import { toast } from "sonner"
 const TaskSchema = z.object({
   name: z.string(),
   description: z.string(),
-  department: z.string(),
+  columnId: z.string(),
 })
 
 export default function KanbanHeader() {
@@ -38,6 +38,7 @@ export default function KanbanHeader() {
     defaultValues: {
       name: "",
       description: "",
+      columnId: "",
     },
   })
 
@@ -49,7 +50,7 @@ export default function KanbanHeader() {
     }
     console.log(validValues)
 
-    await createTask(values)
+    await createTask(validValues)
     toast("Task created.")
   }
 
@@ -113,7 +114,7 @@ export default function KanbanHeader() {
                 />
                 <FormField
                   control={form.control}
-                  name="department"
+                  name="columnId"
                   render={({ field }) => (
                     <FormItem className="grid grid-cols-4 items-center gap-4">
                       <FormLabel>Department</FormLabel>
