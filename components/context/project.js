@@ -5,6 +5,7 @@ const { createContext, useContext, useState, useEffect } = require("react")
 const ProjecTCtx = createContext()
 
 export const ProjectCtxProvider = ({ children }) => {
+  const [currentProjectId, setCurrentProjectId] = useState(null)
   const [data, setData] = useState([])
   const [refetch, setRefetch] = useState(false)
 
@@ -23,7 +24,15 @@ export const ProjectCtxProvider = ({ children }) => {
   }
 
   return (
-    <ProjecTCtx.Provider value={{ data, triggerRefetch, addNewProject }}>
+    <ProjecTCtx.Provider
+      value={{
+        data,
+        triggerRefetch,
+        addNewProject,
+        currentProjectId,
+        setCurrentProjectId,
+      }}
+    >
       {children}
     </ProjecTCtx.Provider>
   )

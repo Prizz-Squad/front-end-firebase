@@ -42,11 +42,12 @@ export const changeTaskDepartment = async (id, department) => {
 }
 
 export const getTasksSnapshot = async (callback) => {
-  return onSnapshot(coll, (snapshot) => {
+  onSnapshot(coll, (snapshot) => {
     const data = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }))
     callback(data)
   })
+  return () => {}
 }

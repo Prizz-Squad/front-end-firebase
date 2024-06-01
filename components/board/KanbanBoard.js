@@ -81,32 +81,32 @@ const initialTasks = [
   },
   {
     id: "task5",
-    columnId: "in-progress",
+    columnId: "DESIGN",
     content: "Design color scheme and typography",
   },
   {
     id: "task6",
-    columnId: "todo",
+    columnId: "DESIGN",
     content: "Implement user authentication",
   },
   {
     id: "task7",
-    columnId: "todo",
+    columnId: "CAPTION",
     content: "Build contact us page",
   },
   {
     id: "task8",
-    columnId: "todo",
+    columnId: "CAPTION",
     content: "Create product catalog",
   },
   {
     id: "task9",
-    columnId: "todo",
+    columnId: "CAPTION",
     content: "Develop about us page",
   },
   {
     id: "task10",
-    columnId: "todo",
+    columnId: "CAPTION",
     content: "Optimize website for mobile devices",
   },
   {
@@ -261,7 +261,6 @@ export function KanbanBoard({ cols = defaultCols }) {
       return `Dragging ${active.data.current?.type} cancelled.`
     },
   }
-  console.log(dialogTask, "tialog")
 
   const fileInput = useRef(null)
 
@@ -304,7 +303,6 @@ export function KanbanBoard({ cols = defaultCols }) {
                 column={col}
                 tasks={filteredTasks.filter((task) => task.columnId === col.id)}
                 onTaskClick={(task) => {
-                  console.log("Task clicked: ", task)
                   setShowDialog(true)
                   setDialogTask(task)
                 }}

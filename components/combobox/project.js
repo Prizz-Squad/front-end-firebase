@@ -18,33 +18,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { CommandList } from "cmdk"
-
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-]
+import { useProjectContext } from "../context/project"
 
 export function ProjectCombobox() {
+  const { data, currentProjectId, setCurrentProjectId } = useProjectContext()
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -55,8 +33,8 @@ export function ProjectCombobox() {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
+          {currentProjectId
+            ? data.find((framework) => framework.id === currentProjectId)?.name
             : "Select project..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -67,23 +45,26 @@ export function ProjectCombobox() {
           <CommandEmpty>No framework found.</CommandEmpty>
           <CommandGroup>
             <CommandList>
-              {console.log(frameworks)}
-              {frameworks.map((framework) => (
+              {data.map((framework) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
+                  key={framework.id}
+                  value={framework.id}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
+                    setCurrentProjectId(
+                      currentValue === currentProjectId ? "" : currentValue
+                    )
                     setOpen(false)
                   }}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === framework.value ? "opacity-100" : "opacity-0"
+                      currentProjectId === framework.id
+                        ? "opacity-100"
+                        : "opacity-0"
                     )}
                   />
-                  {framework.label}
+                  {framework.name}
                 </CommandItem>
               ))}
             </CommandList>
