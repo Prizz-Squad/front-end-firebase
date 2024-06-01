@@ -105,6 +105,8 @@ export function UsersListRowActions({ row }) {
     }
   }
 
+  console.log(role, "role")
+
   return (
     <>
       <DropdownMenu>

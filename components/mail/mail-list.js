@@ -56,7 +56,7 @@ export function MailList({ items }) {
             </div>
             {item.labels?.length ? (
               <div className="flex items-center gap-2">
-                {item.labels.map((label) => (
+                {item?.labels.map((label) => (
                   <Badge key={label} variant={getBadgeVariantFromLabel(label)}>
                     {label}
                   </Badge>
