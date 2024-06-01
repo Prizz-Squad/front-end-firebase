@@ -54,6 +54,7 @@ import { COLUMNS } from "@/constants/enum"
 import { DepsMultiPicker } from "../dropdown/deps-multi-picker"
 import { useRouter } from "next/router"
 import AvatarRow from "../avatars/AvatarRow"
+import { uploadFileToBucket } from "@/db/storage/task-images"
 
 const defaultCols = [
   {
@@ -390,9 +391,13 @@ const TaskDialog = ({ task, show, setShow }) => {
   const handleFileChange = async (event) => {
     const file = event.target.files[0]
 
-    const base64String = await toBase64(file)
-
-    toast("File uploaded successfully")
+    uploadFileToBucket({
+      imageUpload: file,
+      onSuccess: (url) => {
+        console.log(url)
+        toast("File uploaded successfully")
+      },
+    })
   }
 
   const [editModeCommentId, setEditModeCommentId] = useState("")
