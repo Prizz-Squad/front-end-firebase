@@ -88,17 +88,18 @@ export function KanbanBoard({ cols = defaultCols }) {
   const urlDeps = router.query.deps
   const urlsDepsArray = urlDeps ? urlDeps.split(",") : []
 
-  const [selectedEmployee,setSelectedEmployee] = useState([])
-
+  const [selectedEmployee, setSelectedEmployee] = useState([])
 
   const filteredTasks = useMemo(() => {
     console.log("filteredTasks", tasks)
+
+    const shouldMatchDeps = urlsDepsArray.length > 0
     return tasks.filter((task) => {
       const nameMatch = task.name
         .toLowerCase()
         .includes(globalFilter.toLowerCase())
       const depsMatch = urlsDepsArray.includes(task.department)
-      return nameMatch && depsMatch
+      return shouldMatchDeps ? nameMatch && depsMatch : nameMatch
     })
   }, [tasks, urlsDepsArray, globalFilter])
 
@@ -109,10 +110,6 @@ export function KanbanBoard({ cols = defaultCols }) {
       coordinateGetter: coordinateGetter,
     })
   )
-
-
-  
-
 
   function getDraggingTaskData(taskId, columnId) {
     const tasksInColumn = filteredTasks.filter(
@@ -229,9 +226,11 @@ export function KanbanBoard({ cols = defaultCols }) {
           onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm my-4"
         />
-        <AvatarRow setSelectedEmployee={setSelectedEmployee} selectedEmployee={selectedEmployee}/>
+        <AvatarRow
+          setSelectedEmployee={setSelectedEmployee}
+          selectedEmployee={selectedEmployee}
+        />
         <DepsMultiPicker />
-        
       </div>
       <DndContext
         accessibility={{
