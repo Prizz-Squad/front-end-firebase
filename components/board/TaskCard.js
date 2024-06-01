@@ -90,11 +90,11 @@ export function TaskCard({ task, isOverlay, onClick }) {
             Task
           </Badge>
           <DropdownMenu>
-            <DropdownMenuTrigger className="ms-2">
+            <DropdownMenuTrigger  className="ms-2">
               <Ellipsis />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[160px]">
-              <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuContent onClick={(e) => e.stopPropagation()}  align="end" className="w-[160px]">
+              <DropdownMenuItem >Edit</DropdownMenuItem>
               <DropdownMenuItem>Make a copy</DropdownMenuItem>
               <DropdownMenuItem>Favorite</DropdownMenuItem>
               <DropdownMenuSeparator />

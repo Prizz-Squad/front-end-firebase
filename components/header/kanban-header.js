@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog"
+} from "../ui/dialog";
 import {
   Form,
   FormControl,
@@ -15,44 +15,97 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form"
-import { Input } from "../ui/input"
-import { Button } from "../ui/button"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { PlugIcon, Plus } from "lucide-react"
-import { z } from "zod"
-import { createTask } from "@/db/collections/task"
-import { userId } from "@/dummy-data/users"
-import { toast } from "sonner"
+  FormDescription,
+} from "../ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PlugIcon, Plus } from "lucide-react";
+import { z } from "zod";
+import { createTask } from "@/db/collections/task";
+import { userId } from "@/dummy-data/users";
+import { toast } from "sonner";
+import { SelectGroup } from "@radix-ui/react-select";
+import { COLUMNS, DEPARTMENTSENUM } from "@/constants/enum";
+import { Loader2 } from "lucide-react"
 
 const TaskSchema = z.object({
-  name: z.string(),
+  name: z.string().nonempty("Please write the name"),
   description: z.string(),
   columnId: z.string(),
-})
+});
 
 export default function KanbanHeader() {
+  const [isOpen, setIsOpen] = useState();
+  const [isLoading,setIsLoading] = useState()
+
+  const defaultCols = [
+    {
+      title: "Design",
+      variable: DEPARTMENTSENUM.DESIGN,
+    },
+    {
+      title: "Caption",
+      variable: DEPARTMENTSENUM.CAPTION,
+    },
+    {
+      title: "Schedule",
+      variable: DEPARTMENTSENUM.SCHEDULE,
+    },
+  ];
+
+  const [priority, setPriority] = useState();
+  const [department, setDepartment] = useState();
+
+  const onChangePriority = (value) => {
+    setPriority(value);
+  };
+  const onChangeDepartment = (value) => {
+    setDepartment(value);
+  };
+
   const form = useForm({
     resolver: zodResolver(TaskSchema),
     defaultValues: {
       name: "",
       description: "",
-      columnId: "",
+      columnId: COLUMNS.TODO,
     },
-  })
+  });
 
   const onSubmit = async (values) => {
+    setIsLoading(true)
     const validValues = {
       ...values,
       userId,
-      status: "todo", //TODO: what is the status
-    }
-    console.log(validValues)
+      priority: priority,
+      department: department,
+    };
+    console.log(values, "values");
+    console.log(validValues, "validValues");
 
-    await createTask(validValues)
-    toast("Task created.")
-  }
+    try {
+      await createTask(validValues);
+      toast("Task created.");
+      setIsLoading(false)
+      setIsOpen(false);
+      form.reset();
+    } catch (error) {
+      
+      toast.error(error.message);
+    }
+    finally{
+      setIsLoading(false)
+    }
+  };
 
   return (
     <div className="flex justify-between m-2">
@@ -60,10 +113,11 @@ export default function KanbanHeader() {
         <h1 className="text-2xl font-bold">Tasks</h1>
       </div>
 
-      <Dialog>
-        <DialogTrigger asChild>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger onClick={() => setIsOpen(true)}>
           <Button variant="outline">
-            <Plus className="h-4" />
+             <Plus className="h-4" />
+
             Create Task
           </Button>
         </DialogTrigger>
@@ -112,31 +166,52 @@ export default function KanbanHeader() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="columnId"
-                  render={({ field }) => (
-                    <FormItem className="grid grid-cols-4 items-center gap-4">
-                      <FormLabel>Department</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Design"
-                          className="col-span-3"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="col-span-4" />
-                    </FormItem>
-                  )}
-                />
+                <div className="w-full items-center flex flex-row justify-between">
+                  <p className=" font-semibold text-sm">Department</p>
+                  <Select onValueChange={onChangeDepartment}>
+                    <SelectTrigger className="w-3/4">
+                      <SelectValue placeholder="Design" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {defaultCols.map((dt, i) => (
+                          <SelectItem value={dt.variable} key={i}>
+                            {dt.title}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="w-full items-center flex flex-row justify-between">
+                  <p className=" font-semibold text-sm">Piority</p>
+                  <Select onValueChange={onChangePriority}>
+                    <SelectTrigger className="w-3/4">
+                      <SelectValue placeholder="Medium" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="high">High</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="low">Low</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <DialogFooter>
-                <Button type="submit">Save changes</Button>
+              <DialogFooter asChild>
+                <Button type="submit" disabled={isLoading}>
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                
+                Save changes
+                
+              </Button>
               </DialogFooter>
             </form>
           </Form>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

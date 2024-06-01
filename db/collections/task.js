@@ -13,6 +13,7 @@ import {
 const coll = collection(db, "tasks")
 
 export const createTask = async (values) => {
+  console.log(values,"colletionvalue")
   const docRef = doc(coll)
   await setDoc(docRef, values)
 }
