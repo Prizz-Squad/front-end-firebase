@@ -47,6 +47,7 @@ import { useTaskContext } from "../context/tasks"
 import {
   addCaptionToTask,
   addImageToTask,
+  changeTaskAssignee,
   changeTaskColId,
   changeTaskPriority,
   changeTaskStatus,
@@ -62,6 +63,7 @@ import { uploadFileToBucket } from "@/db/storage/task-images"
 import { createNotification } from "@/db/collections/notification"
 import { useProjectContext } from "../context/project"
 import { useUserContext } from "../context/user"
+import { UserCombobox } from "../combobox/user"
 
 const defaultCols = [
   {
@@ -495,7 +497,6 @@ const TaskDialog = ({ task, show, setShow }) => {
     try {
       await changeTaskStatus(task.id, columnId)
       toast("Status succesfully changed")
-    
     } catch (error) {
       console.error(error)
       toast.error("Priority has an error")
@@ -669,13 +670,17 @@ const TaskDialog = ({ task, show, setShow }) => {
                 </label>
               </div>
               <div className="flex gap-2">
-                <Select onValueChange={(columnId) =>  onSubmitUpdateStatus(columnId)}>
+                <Select
+                  onValueChange={(columnId) => onSubmitUpdateStatus(columnId)}
+                >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="In Progress" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value={COLUMNS.IN_PROGRESS}>In Progress</SelectItem>
+                      <SelectItem value={COLUMNS.IN_PROGRESS}>
+                        In Progress
+                      </SelectItem>
                       <SelectItem value={COLUMNS.TODO}>To-Do</SelectItem>
                       <SelectItem value={COLUMNS.DONE}>Done</SelectItem>
                     </SelectGroup>
@@ -716,6 +721,27 @@ const TaskDialog = ({ task, show, setShow }) => {
                     />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
+                  <UserCombobox
+                    onSelect={(newUserId) => {
+                      console.log("newUserId", newUserId)
+                      changeTaskAssignee(task.id, newUserId).then(() => {
+                        toast("Assignee changed")
+                        createNotification({
+                          subject: "Task Assignee Changed",
+                          text: `Task ${task.name} has been assigned to ${newUserId} by ${user.email}`, //${userId}
+                          name: user.firstName || user.email,
+                          email: user.email,
+                          labels: ["Assignee"],
+                          userId,
+                          projectId: currentProjectId,
+                          taskId: task.id,
+                          newUserId,
+                        })
+                      })
+                    }}
+                    userId={task?.assignee}
+                    onlyEmployee
+                  />
                 </div>
                 <div className="flex mt-4  flex-row justify-between items-center">
                   <p className="mr-4">Label</p>

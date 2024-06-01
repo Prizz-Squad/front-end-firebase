@@ -69,6 +69,10 @@ export const getTasksSnapshot = async (callback) => {
   return () => {}
 }
 
+export const changeTaskAssignee = async (id, assignee) => {
+  await updateDoc(doc(coll, id), { assignee })
+}
+
 export const addCaptionToTask = async (id, caption) => {
   await updateDoc(doc(coll, id), { caption })
 }
