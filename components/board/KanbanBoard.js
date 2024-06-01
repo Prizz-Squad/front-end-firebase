@@ -49,6 +49,7 @@ import {
   addImageToTask,
   changeTaskColId,
   changeTaskPriority,
+  changeTaskStatus,
   toggleIsTaskCompleted,
 } from "@/db/collections/task"
 import { createComment, getCommentsSnapshot } from "@/db/collections/comments"
@@ -479,6 +480,17 @@ const TaskDialog = ({ task, show, setShow }) => {
       toast.error("Priority has an error")
     }
   }
+
+  const onSubmitUpdateStatus = async (columnId) => {
+    try {
+      await changeTaskStatus(task.id, columnId)
+      toast("Status succesfully changed")
+    
+    } catch (error) {
+      console.error(error)
+      toast.error("Priority has an error")
+    }
+  }
   return (
     <>
       <Dialog open={show} onOpenChange={setShow}>
@@ -647,15 +659,15 @@ const TaskDialog = ({ task, show, setShow }) => {
                 </label>
               </div>
               <div className="flex gap-2">
-                <Select>
+                <Select onValueChange={(columnId) =>  onSubmitUpdateStatus(columnId)}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="In Progress" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="in-progress">In Progress</SelectItem>
-                      <SelectItem value="todo">To-Do</SelectItem>
-                      <SelectItem value="done">Done</SelectItem>
+                      <SelectItem value={COLUMNS.IN_PROGRESS}>In Progress</SelectItem>
+                      <SelectItem value={COLUMNS.TODO}>To-Do</SelectItem>
+                      <SelectItem value={COLUMNS.DONE}>Done</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>

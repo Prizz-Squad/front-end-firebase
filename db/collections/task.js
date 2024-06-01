@@ -50,6 +50,10 @@ export const changeTaskPriority = async (id, priority) => {
   await updateDoc(doc(coll, id), { priority })
 }
 
+export const changeTaskStatus = async (id, columnId) => {
+  await updateDoc(doc(coll, id), { columnId })
+}
+
 export const toggleIsTaskCompleted = async (id, isCompleted) => {
   await updateDoc(doc(coll, id), { isCompleted })
 }
