@@ -1,3 +1,4 @@
+import { NotificationCtxProvider } from "@/components/context/notifications"
 import { ProjectCtxProvider } from "@/components/context/project"
 import { TaskCtxProvider } from "@/components/context/tasks"
 import { UserCtxProvider } from "@/components/context/user"
@@ -21,15 +22,17 @@ export default function App({ Component, pageProps }) {
       <UserCtxProvider>
         <ProjectCtxProvider>
           <TaskCtxProvider>
-            <Toaster />
-            <TooltipProvider>
-              {router.pathname !== "/login" &&
-                router.pathname !== "/signup" && <Sidebar />}
+            <NotificationCtxProvider>
+              <Toaster />
+              <TooltipProvider>
+                {router.pathname !== "/login" &&
+                  router.pathname !== "/signup" && <Sidebar />}
 
-              <div className="ml-0 sm:ml-14 ">
-                <Component {...pageProps} />
-              </div>
-            </TooltipProvider>
+                <div className="ml-0 sm:ml-14 ">
+                  <Component {...pageProps} />
+                </div>
+              </TooltipProvider>
+            </NotificationCtxProvider>
           </TaskCtxProvider>
         </ProjectCtxProvider>
       </UserCtxProvider>

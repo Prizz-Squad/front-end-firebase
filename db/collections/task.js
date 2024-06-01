@@ -42,10 +42,6 @@ export const updateTask = async (id, project) => {
   await setDoc(doc(coll, id), project)
 }
 
-export const changeTaskStatus = async (id, status) => {
-  await setDoc(doc(coll, id), { status })
-}
-
 export const changeTaskColId = async (id, columnId) => {
   await updateDoc(doc(coll, id), { columnId })
 }

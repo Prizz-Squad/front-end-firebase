@@ -58,6 +58,9 @@ import { DepsMultiPicker } from "../dropdown/deps-multi-picker"
 import { useRouter } from "next/router"
 import AvatarRow from "../avatars/AvatarRow"
 import { uploadFileToBucket } from "@/db/storage/task-images"
+import { createNotification } from "@/db/collections/notification"
+import { useUserContext } from "../context/user"
+import { useProjectContext } from "../context/project"
 
 const defaultCols = [
   {
@@ -75,6 +78,8 @@ const defaultCols = [
 ]
 export function KanbanBoard({ cols = defaultCols }) {
   const router = useRouter()
+  const { userId, user } = useUserContext()
+  const { currentProjectId } = useProjectContext()
   const { snapshotData: tasks, setSnapshotData: setTasks } = useTaskContext()
   const [columns, setColumns] = useState(cols)
   const pickedUpTaskColumn = useRef(null)
@@ -95,12 +100,10 @@ export function KanbanBoard({ cols = defaultCols }) {
   const [selectedEmployee, setSelectedEmployee] = useState([])
 
   const filteredTasks = useMemo(() => {
-    console.log("filteredTasks", tasks)
-
     const shouldMatchDeps = urlsDepsArray.length > 0
     return tasks.filter((task) => {
       const nameMatch = task.name
-        .toLowerCase()
+        ?.toLowerCase()
         .includes(globalFilter.toLowerCase())
       const depsMatch = urlsDepsArray.includes(task.department)
       return shouldMatchDeps ? nameMatch && depsMatch : nameMatch
@@ -281,6 +284,17 @@ export function KanbanBoard({ cols = defaultCols }) {
   function onTaskColumnChangedEvent(updatedTask) {
     const { id, columnId } = updatedTask
     changeTaskColId(id, columnId)
+
+    createNotification({
+      subject: "Task Moved",
+      text: `Task ${updatedTask.name} has been moved to ${updatedTask.columnId} by ${user.email}`, //${userId}
+      name: user.firstName || user.email,
+      email: user.email,
+      labels: ["Completed"],
+      userId,
+      projectId: currentProjectId,
+      taskId: id,
+    })
   }
 
   function onDragStart(event) {
@@ -383,6 +397,8 @@ export function KanbanBoard({ cols = defaultCols }) {
 
 const TaskDialog = ({ task, show, setShow }) => {
   const fileInput = useRef(null)
+  const { currentProjectId } = useProjectContext()
+  const { userId, user } = useUserContext()
   const [inputValue, setInputValue] = useState("")
   const [comments, setComments] = useState([])
   const [isCompleted, setIsCompleted] = useState(task?.isCompleted || false)
@@ -430,7 +446,19 @@ const TaskDialog = ({ task, show, setShow }) => {
     try {
       await changeTaskPriority(task.id, selectedValue)
       toast("Priority succesfully changed")
+      createNotification({
+        subject: "Task Priority Changed",
+        // text: `Task ${task.name} has been moved to ${updatedTask.columnId} by ${user.email}`, //${userId}
+        text: `The priority of ${task.name} has been changed to ${selectedValue} by ${user.email}`, //${userId}
+        name: user.firstName || user.email,
+        email: user.email,
+        labels: ["Completed"],
+        userId,
+        projectId: currentProjectId,
+        taskId: task.id,
+      })
     } catch (error) {
+      console.error(error)
       toast.error("Priority has an error")
     }
   }
@@ -570,10 +598,24 @@ const TaskDialog = ({ task, show, setShow }) => {
               <div className="flex items-center space-x-2 mb-4">
                 <Checkbox
                   id="isCompleted"
-                  onCheckedChange={(checked) => {
+                  onCheckedChange={async (checked) => {
                     try {
                       setIsCompleted(checked)
-                      toggleIsTaskCompleted(task.id, checked)
+                      console.log("checked", checked)
+                      await toggleIsTaskCompleted(task.id, checked)
+                      console.log("task", task)
+                      createNotification({
+                        subject: "Task Completed",
+                        text: `Task ${task.name} has been marked as ${
+                          checked ? "Completed" : "Incompleted"
+                        } by ${user.email}`, //${userId}
+                        name: user.firstName || user.email,
+                        email: user.email,
+                        labels: ["Completed"],
+                        userId,
+                        projectId: currentProjectId,
+                        taskId: task.id,
+                      })
                     } catch (error) {
                       console.error(error)
                     }
