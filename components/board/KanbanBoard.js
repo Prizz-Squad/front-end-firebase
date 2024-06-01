@@ -43,7 +43,11 @@ import {
 import { toBase64 } from "@/utils/files"
 import { toast } from "sonner"
 import { useTaskContext } from "../context/tasks"
-import { changeTaskColId, changeTaskPriority, toggleIsTaskCompleted } from "@/db/collections/task"
+import {
+  changeTaskColId,
+  changeTaskPriority,
+  toggleIsTaskCompleted,
+} from "@/db/collections/task"
 import { createComment, getCommentsSnapshot } from "@/db/collections/comments"
 import { Checkbox } from "../ui/checkbox"
 import { COLUMNS } from "@/constants/enum"
@@ -101,9 +105,6 @@ export function KanbanBoard({ cols = defaultCols }) {
       coordinateGetter: coordinateGetter,
     })
   )
-
-
-
 
   function getDraggingTaskData(taskId, columnId) {
     const tasksInColumn = filteredTasks.filter(
@@ -405,13 +406,11 @@ const TaskDialog = ({ task, show, setShow }) => {
     })
   }
   const onSubmitUpdatePriority = async (selectedValue) => {
-
     try {
-      await changeTaskPriority(task.id,selectedValue)
+      await changeTaskPriority(task.id, selectedValue)
       toast("Priority succesfully changed")
     } catch (error) {
       toast.error("Priority has an error")
-
     }
   }
   return (
@@ -554,7 +553,7 @@ const TaskDialog = ({ task, show, setShow }) => {
               </label>
             </div>
             <div className="flex gap-2">
-              <Select > 
+              <Select>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="In Progress" />
                 </SelectTrigger>
@@ -566,9 +565,18 @@ const TaskDialog = ({ task, show, setShow }) => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <Select onValueChange={(selectedValue)=> onSubmitUpdatePriority(selectedValue) }>
+              <Select
+                onValueChange={(selectedValue) =>
+                  onSubmitUpdatePriority(selectedValue)
+                }
+              >
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder={task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}/>
+                  <SelectValue
+                    placeholder={
+                      task?.priority.charAt(0).toUpperCase() +
+                      task?.priority.slice(1)
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
