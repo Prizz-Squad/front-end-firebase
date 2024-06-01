@@ -38,6 +38,8 @@ import { createProject, getProjects } from "@/db/collections/project"
 import { useProjectContext } from "@/components/context/project"
 import { Loader2, Plus } from "lucide-react"
 import { useUserContext } from "@/components/context/user"
+import Wrapper from "@/components/wrapper/wrapper"
+import { USERS } from "@/constants/enum"
 
 export const ProjectSchema = z.object({
   name: z.string().nonempty("Name is required"),
@@ -97,10 +99,12 @@ export default function UsersPage() {
 
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild onClick={() => setIsOpen(true)}>
+            <Wrapper requiredRight={[USERS.ADMIN,USERS.MANAGER]}>
             <Button variant="outline">
               <Plus className="h-4" />
               Create Project
             </Button>
+            </Wrapper>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <Form {...form}>

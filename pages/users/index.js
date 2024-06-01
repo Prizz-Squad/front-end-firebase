@@ -43,6 +43,8 @@ import { SignupForm } from "@/components/forms/signup"
 import { createUserWithEmailAndPassword } from "firebase/auth"
 import { auth } from "@/init/firebase"
 import { createUser } from "@/db/collections/user"
+import { USERS } from "@/constants/enum"
+import { useRouter } from "next/router"
 
 export const ProjectSchema = z.object({
   name: z.string().nonempty("Name is required"),
@@ -53,7 +55,20 @@ export default function UsersPage() {
   const [isOpen, setIsOpen] = useState()
   const [isLoading, setIsLoading] = useState()
 
-  const { data, addNewProject, triggerRefetch } = useUserContext()
+  const { data, addNewProject, triggerRefetch,userId } = useUserContext()
+  
+  const router = useRouter()
+
+  useEffect(() => {
+  
+    const user = data.find((element) => element.uid === userId)
+    
+    console.log(user,"useri")
+    if( user?.role === USERS.EMPLOYEE){
+      router.push("/dashboard")
+    }
+  }, [data])
+  
 
   const [role, setRole] = useState("MANAGER")
 

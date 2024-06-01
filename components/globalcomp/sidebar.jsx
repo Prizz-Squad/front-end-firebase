@@ -80,6 +80,8 @@ import { ProjectCombobox } from "../combobox/project"
 import { useUserContext } from "../context/user"
 import { Avatar, AvatarFallback } from "../ui/avatar"
 import { auth } from "@/init/firebase"
+import Wrapper from "../wrapper/wrapper"
+import { USERS } from "@/constants/enum"
 
 export default function Sidebar() {
   const components = [
@@ -118,6 +120,8 @@ export default function Sidebar() {
   const { user, data } = useUserContext()
 
   const username = data.find((element) => element.uid === user.uid)
+
+  console.log(username,"user")
 
   const ListItem = React.forwardRef(function ListItem(
     { className, title, children, ...props },
@@ -186,6 +190,7 @@ export default function Sidebar() {
             </TooltipTrigger>
             <TooltipContent side="right">Projects</TooltipContent>
           </Tooltip>
+          <Wrapper requiredRight={[USERS.ADMIN,USERS.MANAGER]}>
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
@@ -202,6 +207,7 @@ export default function Sidebar() {
             </TooltipTrigger>
             <TooltipContent side="right">Users</TooltipContent>
           </Tooltip>
+          </Wrapper>
           <Tooltip>
             <TooltipTrigger asChild>
               <Link

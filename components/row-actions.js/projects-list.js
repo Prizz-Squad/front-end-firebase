@@ -59,6 +59,8 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ProjectSchema } from "@/pages/projects"
 import { useProjectContext } from "../context/project"
+import Wrapper from "../wrapper/wrapper"
+import { USERS } from "@/constants/enum"
 
 export function ProjectsListRowActions({ row }) {
   const data = row.original
@@ -101,6 +103,7 @@ export function ProjectsListRowActions({ row }) {
 
   return (
     <>
+      <Wrapper requiredRight={[USERS.ADMIN,USERS.MANAGER]}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -109,9 +112,7 @@ export function ProjectsListRowActions({ row }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>
-            <Link href={`/projects/${data.id}/board`}>View project</Link>
-          </DropdownMenuItem>
+          
           <DropdownMenuItem
             onClick={() => {
               navigator.clipboard.writeText(data.id)
@@ -128,7 +129,7 @@ export function ProjectsListRowActions({ row }) {
               form.setValue("description", data.description)
             }}
           >
-            Project settings
+            Update project
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setShowDeleteDialog(true)}>
@@ -136,6 +137,7 @@ export function ProjectsListRowActions({ row }) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      </Wrapper>
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>
