@@ -19,6 +19,12 @@ export const ProjectCtxProvider = ({ children }) => {
     })
   }, [refetch])
 
+  useEffect(() => {
+    if (data.length > 0 && !currentProjectId) {
+      setCurrentProjectId(data[0].id)
+    }
+  }, [data])
+
   const addNewProject = (newProject) => {
     setData((prev) => [newProject, ...prev])
   }
