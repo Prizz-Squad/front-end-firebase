@@ -1,5 +1,6 @@
 import { columns } from "@/components/columns/tasks-list"
 import { DataTable } from "@/components/data-table/data-table"
+import KanbanHeader from "@/components/header/kanban-header"
 import { ProjectTabs } from "@/components/tabs/project-tabs"
 
 const data = [
@@ -788,6 +789,7 @@ const data = [
 export default function ProjectListPage() {
   return (
     <div className="ms-2">
+      <KanbanHeader />
       <ProjectTabs />
       <div>
         <DataTable columns={columns} data={data} />

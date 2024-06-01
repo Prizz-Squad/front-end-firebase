@@ -1,4 +1,5 @@
 import { ProjectCtxProvider } from "@/components/context/project"
+import { TaskCtxProvider } from "@/components/context/tasks"
 import Sidebar from "@/components/globalcomp/sidebar"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
@@ -19,16 +20,18 @@ export default function App({ Component, pageProps }) {
       disableTransitionOnChange
     >
       <ProjectCtxProvider>
-        <Toaster />
-        <TooltipProvider>
-          {router.pathname !== "/login" && router.pathname !== "/signup" && (
-            <Sidebar />
-          )}
+        <TaskCtxProvider>
+          <Toaster />
+          <TooltipProvider>
+            {router.pathname !== "/login" && router.pathname !== "/signup" && (
+              <Sidebar />
+            )}
 
-          <div className="ml-0 sm:ml-14 ">
-            <Component {...pageProps} />
-          </div>
-        </TooltipProvider>
+            <div className="ml-0 sm:ml-14 ">
+              <Component {...pageProps} />
+            </div>
+          </TooltipProvider>
+        </TaskCtxProvider>
       </ProjectCtxProvider>
     </ThemeProvider>
   )

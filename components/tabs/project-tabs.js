@@ -32,8 +32,6 @@ export const ProjectTabs = () => {
     // },
   ]
 
-  console.log(router.pathname)
-
   return (
     <ScrollArea className="overflow-x-auto my-2 scrollbar-hide">
       <Tabs className="w-[800px]">
