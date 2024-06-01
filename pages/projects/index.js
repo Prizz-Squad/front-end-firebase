@@ -44,7 +44,7 @@ export const ProjectSchema = z.object({
   description: z.string().nonempty("Description is required"),
 })
 
-export default function DemoPage() {
+export default function UsersPage() {
   const [isOpen, setIsOpen] = useState()
   const [isLoading, setIsLoading] = useState()
 

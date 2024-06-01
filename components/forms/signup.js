@@ -1,18 +1,18 @@
-import Link from "next/link";
+import Link from "next/link"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
 import {
   Form,
@@ -21,7 +21,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui/form"
 
 const FormSchema = z.object({
   firstName: z.string().min(2, {
@@ -34,7 +34,7 @@ const FormSchema = z.object({
   password: z.string().min(8, {
     message: "Password must be at least 8 characters.",
   }),
-});
+})
 
 export function SignupForm({ onSubmit }) {
   const form = useForm({
@@ -42,11 +42,11 @@ export function SignupForm({ onSubmit }) {
     defaultValues: {
       username: "",
     },
-  });
+  })
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Card className="mx-auto max-w-sm">
           <CardHeader>
             <CardTitle className="text-xl">Sign Up</CardTitle>
@@ -135,5 +135,5 @@ export function SignupForm({ onSubmit }) {
         </Card>
       </form>
     </Form>
-  );
+  )
 }
