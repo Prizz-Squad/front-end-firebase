@@ -79,6 +79,7 @@ import { ModeToggle } from "../toggles/dark-light-mode"
 import { ProjectCombobox } from "../combobox/project"
 import { useUserContext } from "../context/user"
 import { Avatar, AvatarFallback } from "../ui/avatar"
+import { auth } from "@/init/firebase"
 
 export default function Sidebar() {
   const components = [
@@ -114,12 +115,9 @@ export default function Sidebar() {
     // Add more component objects as needed
   ]
 
-  const { user,data } = useUserContext()
+  const { user, data } = useUserContext()
 
-
-
-  
-   const username = data.find((element) => element.uid === user.uid)
+  const username = data.find((element) => element.uid === user.uid)
 
   const ListItem = React.forwardRef(function ListItem(
     { className, title, children, ...props },
@@ -373,15 +371,12 @@ export default function Sidebar() {
               size="icon"
               className="overflow-hidden rounded-full hover:ring-1 hover:ring-black"
             >
-                  <Avatar
-          >
-          {
-            console.log(username,"useranem")
-          }
-            <AvatarFallback className=" ring-2 ring-black p-4">
-              {username?.firstName?.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+              <Avatar>
+                {console.log(username, "useranem")}
+                <AvatarFallback className=" ring-2 ring-black p-4">
+                  {username?.firstName?.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -393,6 +388,7 @@ export default function Sidebar() {
             <DropdownMenuItem
               onClick={() => {
                 router.push("/login")
+                auth.signOut()
               }}
             >
               Logout
