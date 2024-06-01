@@ -78,6 +78,7 @@ import React from "react"
 import { ModeToggle } from "../toggles/dark-light-mode"
 import { ProjectCombobox } from "../combobox/project"
 import { useUserContext } from "../context/user"
+import { Avatar, AvatarFallback } from "../ui/avatar"
 
 export default function Sidebar() {
   const components = [
@@ -113,7 +114,12 @@ export default function Sidebar() {
     // Add more component objects as needed
   ]
 
-  const { user } = useUserContext()
+  const { user,data } = useUserContext()
+
+
+
+  
+   const username = data.find((element) => element.uid === user.uid)
 
   const ListItem = React.forwardRef(function ListItem(
     { className, title, children, ...props },
@@ -365,15 +371,17 @@ export default function Sidebar() {
             <Button
               variant="outline"
               size="icon"
-              className="overflow-hidden rounded-full"
+              className="overflow-hidden rounded-full hover:ring-1 hover:ring-black"
             >
-              <img
-                src="https://github.com/shadcn.png"
-                width={36}
-                height={36}
-                alt="Avatar"
-                className="overflow-hidden rounded-full"
-              />
+                  <Avatar
+          >
+          {
+            console.log(username,"useranem")
+          }
+            <AvatarFallback className=" ring-2 ring-black p-4">
+              {username?.firstName?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
