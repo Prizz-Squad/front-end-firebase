@@ -1,3 +1,11 @@
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 import { useEffect, useMemo, useRef, useState } from "react"
 
 import { BoardColumn, BoardContainer } from "./BoardColumn"
@@ -66,6 +74,7 @@ import { useUserContext } from "../context/user"
 import { UserCombobox } from "../combobox/user"
 import { formatDistanceToNow } from "date-fns"
 import { Timestamp } from "firebase/firestore"
+import Image from "next/image"
 
 const defaultCols = [
   {
@@ -92,9 +101,6 @@ export function KanbanBoard({ cols = defaultCols }) {
   const [columns, setColumns] = useState(cols)
   const pickedUpTaskColumn = useRef(null)
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns])
-
-
-
 
   const [activeColumn, setActiveColumn] = useState(null)
 
@@ -420,7 +426,7 @@ export function KanbanBoard({ cols = defaultCols }) {
 const TaskDialog = ({ task, show, setShow }) => {
   const fileInput = useRef(null)
   const { currentProjectId } = useProjectContext()
-  const { userId, user,data } = useUserContext()
+  const { userId, user, data } = useUserContext()
   const [inputValue, setInputValue] = useState("")
   const [comments, setComments] = useState([])
   const [isCompleted, setIsCompleted] = useState(task?.isCompleted || false)
@@ -428,9 +434,9 @@ const TaskDialog = ({ task, show, setShow }) => {
   const [showCaptionsDialog, setShowCaptionsDialog] = useState(false)
   const [caption, setCaption] = useState("")
 
+  const [showCarouselIdx, setShowCarouselIdx] = useState(-1)
 
   const userName = data.find((element) => element.uid === userId)
-
 
   const handleButtonClick = () => {
     fileInput.current.click()
@@ -478,9 +484,8 @@ const TaskDialog = ({ task, show, setShow }) => {
       taskId: task.id,
       text,
       userId: "shadcn",
-      date: new Date()  
+      date: new Date(),
     })
-
   }
   const onSubmitUpdatePriority = async (selectedValue) => {
     try {
@@ -546,8 +551,41 @@ const TaskDialog = ({ task, show, setShow }) => {
               </div>
               <DialogDescription>{task?.name || "Content"}</DialogDescription>
             </DialogHeader>
+
             <div>
-              <div className="mb-5">
+              {task?.images && (
+                <>
+                  <div className="mb-3 border-b pb-2">
+                    <h4 className="text-sm font-semibold mt-2">Images</h4>
+                    <div className="flex gap-1 cursor-pointer">
+                      {task?.images.map((image) => (
+                        <Image
+                          key={image}
+                          src={image}
+                          alt="task image"
+                          width={80}
+                          height={80}
+                          onClick={() => {
+                            setShowCarouselIdx(task?.images.indexOf(image))
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+              {task?.caption && (
+                <>
+                  <div className="mb-3 border-b pb-2">
+                    <h4 className="text-sm font-semibold mt-2">Caption</h4>
+                    <div className="flex gap-x-2 mt-4 items-center flex-row">
+                      {console.log("task", task)}
+                      {caption || task?.caption}
+                    </div>
+                  </div>
+                </>
+              )}
+              <div className="mb-2">
                 <h4 className="text-sm font-semibold mt-2">Comments</h4>
                 <div className="flex gap-x-2 mt-4 items-center flex-row">
                   <p className="">Show:</p>
@@ -572,43 +610,44 @@ const TaskDialog = ({ task, show, setShow }) => {
                       </Avatar>
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                          <p className="font-semibold">{userName && userName.firstName}</p>
+                          <p className="font-semibold">
+                            {userName && userName.firstName}
+                          </p>
                           <span className="text-sm font-light">
-                          {/* {formatDistanceToNow(new Date(new Timestamp(comment.date)), {
-                    addSuffix: true,
-                  })} */}
-
-                         {
-                           formatDistanceToNow(new Timestamp(comment.date.seconds,comment.date.nanoseconds).toDate(),{
-                            addSuffix: true
-                           }) 
-                         }
+                            {formatDistanceToNow(
+                              new Timestamp(
+                                comment.date.seconds,
+                                comment.date.nanoseconds
+                              ).toDate(),
+                              {
+                                addSuffix: true,
+                              }
+                            )}
                           </span>
                         </div>
                         {/* <p>{comment.text}</p> */}
 
-                      
                         {editModeCommentId === comment.id ? (
                           <div className=" w-[340px] flex flex-row ">
-                          <Textarea
-                            className="  w-full h-8"
-                            value={comment.text}
-                            onChange={(e) => {
-                              const { value } = e.target
-                              setComments((comments) =>
-                                comments.map((c) =>
-                                  c.id === comment.id
-                                    ? { ...c, text: value }
-                                    : c
+                            <Textarea
+                              className="  w-full h-8"
+                              value={comment.text}
+                              onChange={(e) => {
+                                const { value } = e.target
+                                setComments((comments) =>
+                                  comments.map((c) =>
+                                    c.id === comment.id
+                                      ? { ...c, text: value }
+                                      : c
+                                  )
                                 )
-                              )
-                            }}
-                            onKeyDown={(e) => {
-                              const { value } = e.target
-                              if (e.key !== "Enter" || !value) return
-                              setEditModeCommentId("")
-                            }}
-                          />
+                              }}
+                              onKeyDown={(e) => {
+                                const { value } = e.target
+                                if (e.key !== "Enter" || !value) return
+                                setEditModeCommentId("")
+                              }}
+                            />
                           </div>
                         ) : (
                           <p>{comment.text}</p>
@@ -830,6 +869,36 @@ const TaskDialog = ({ task, show, setShow }) => {
               Add caption
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={showCarouselIdx !== -1}
+        onOpenChange={() => setShowCarouselIdx(-1)}
+      >
+        <DialogContent>
+          <Carousel className="w-full max-w-xs mx-auto">
+            <CarouselContent>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <CarouselItem key={index}>
+                  <div className="p-1">
+                    <Card>
+                      <CardContent className="flex aspect-square items-center justify-center">
+                        <Image
+                          src={task?.images[showCarouselIdx]}
+                          alt="task image"
+                          width={800}
+                          height={800}
+                        />
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
         </DialogContent>
       </Dialog>
     </>
