@@ -379,7 +379,7 @@ export default function Sidebar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+            <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>

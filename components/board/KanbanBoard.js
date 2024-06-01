@@ -675,7 +675,7 @@ const TaskDialog = ({ task, show, setShow }) => {
                   onValueChange={(columnId) => onSubmitUpdateStatus(columnId)}
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={task.columnId} />
+                    <SelectValue placeholder={task?.columnId} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
