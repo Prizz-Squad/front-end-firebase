@@ -71,7 +71,7 @@ import {
 } from "@/db/collections/task"
 import { createComment, getCommentsSnapshot } from "@/db/collections/comments"
 import { Checkbox } from "../ui/checkbox"
-import { COLUMNS, DEPARTMENTS } from "@/constants/enum"
+import { COLUMNS, DEPARTMENTS, USERS } from "@/constants/enum"
 import { DepsMultiPicker } from "../dropdown/deps-multi-picker"
 import { useRouter } from "next/router"
 import AvatarRow from "../avatars/AvatarRow"
@@ -83,6 +83,7 @@ import { UserCombobox } from "../combobox/user"
 import { formatDistanceToNow } from "date-fns"
 import { Timestamp } from "firebase/firestore"
 import Image from "next/image"
+import Wrapper from "../wrapper/wrapper"
 
 const defaultCols = [
   {
@@ -277,11 +278,13 @@ export function KanbanBoard({ cols = defaultCols }) {
           onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm my-4"
         />
-        <AvatarRow
+      <Wrapper requiredRight={[USERS.ADMIN,USERS.MANAGER]}>
+      <AvatarRow
           setSelectedEmployee={setSelectedEmployee}
           selectedEmployee={selectedEmployee}
           data={data}
         />
+      </Wrapper>
         <DepsMultiPicker />
       </div>
       <DndContext
@@ -453,7 +456,7 @@ const TaskDialog = ({ task, show, setShow }) => {
 
   const [showCarouselIdx, setShowCarouselIdx] = useState(-1)
 
-  const userName = data.find((element) => element.uid === userId)
+  const userName = data.find((element) => element.uid === task?.assignee)
 
   const handleButtonClick = () => {
     fileInput.current.click()

@@ -60,7 +60,10 @@ export function TaskCard({ task, isOverlay, onClick }) {
 
 
   
-  const userName = data.find((element) => element.uid === user.uid)
+  const userName = data.find((element) => element.uid === task.assignee) 
+
+  console.log(userName,"adssad")
+
 
   const style = {
     transition,

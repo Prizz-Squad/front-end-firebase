@@ -67,7 +67,7 @@ export default function UsersPage() {
     if( user?.role === USERS.EMPLOYEE){
       router.push("/dashboard")
     }
-  }, [data])
+  }, [])
   
 
   const [role, setRole] = useState("MANAGER")

@@ -20,7 +20,7 @@ const AvatarRow = ({ setSelectedEmployee, selectedEmployee, data }) => {
             style={{ margin: "-5px" }}
           >
             <AvatarFallback className="p-4">
-              {dt?.firstName?.charAt(0).toUpperCase()}
+              {dt?.firstName?.charAt(0).toUpperCase() + "" + dt?.lastName?.charAt(0).toUpperCase()}
             </AvatarFallback>
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
