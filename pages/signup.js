@@ -1,34 +1,25 @@
-import { SignupForm } from "@/components/forms/signup";
-import { useRouter } from "next/router";
+import { SignupForm } from "@/components/forms/signup"
+import { auth } from "@/init/firebase"
+import { createUserWithEmailAndPassword } from "firebase/auth"
+import { useRouter } from "next/router"
+import { toast } from "sonner"
 
 export default function SignupPage() {
-  const router = useRouter();
+  const router = useRouter()
   return (
     <main className="flex items-center justify-center">
       <SignupForm
         onSubmit={async (data) => {
-          console.log("data", data);
-          // TODO: should we post to nextjs api or directly to the backend?
-          const res = await fetch("/api/signup", {
-            method: "POST",
-            body: JSON.stringify({
-              ...data,
-              username: "anxhelo", // TODO: this is hardcoded atm
-            }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-          const json = await res.json();
-          console.log("json", json);
-          const { token } = json;
-          if (!token) {
-            console.error("Invalid credentials");
-            return;
+          const { email, password } = data
+          try {
+            await createUserWithEmailAndPassword(auth, email, password)
+            router.push("/dashboard")
+          } catch (error) {
+            console.error("Error creating user", error)
+            toast.error("Error creating user")
           }
-          router.push("/dashboard");
         }}
       />
     </main>
-  );
+  )
 }
