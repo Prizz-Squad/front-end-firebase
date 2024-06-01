@@ -1,4 +1,13 @@
 import Link from "next/link"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -22,6 +31,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { useState } from "react"
+import { Loader2 } from "lucide-react"
 
 const FormSchema = z.object({
   firstName: z.string().min(2, {
@@ -36,7 +47,10 @@ const FormSchema = z.object({
   }),
 })
 
-export function SignupForm({ onSubmit }) {
+export function SignupForm({ onSubmit,role,setRole ,isLoading}) {
+
+
+
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -88,6 +102,23 @@ export function SignupForm({ onSubmit }) {
                   />
                 </div>
               </div>
+              <div className="grid gap-0 ">
+              <FormLabel className='mb-2'>Role Of User</FormLabel>
+
+              <Select className='w-full' onValueChange={setRole}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>User Role</SelectLabel>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
+                  <SelectItem value="EMPLOYEE">Employee</SelectItem>
+                  <SelectItem value="MANAGER">Manager</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+              </div>
               <div className="grid gap-2">
                 <FormField
                   control={form.control}
@@ -119,18 +150,11 @@ export function SignupForm({ onSubmit }) {
                 />
               </div>
               <Button type="submit" className="w-full">
+              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : ""} 
                 Create an account
               </Button>
-              <Button variant="outline" className="w-full">
-                Sign up with GitHub
-              </Button>
             </div>
-            <div className="mt-4 text-center text-sm">
-              Already have an account?{" "}
-              <Link href="/login" className="underline">
-                Sign in
-              </Link>
-            </div>
+          
           </CardContent>
         </Card>
       </form>

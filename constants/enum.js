@@ -16,3 +16,11 @@ export const DEPARTMENTSENUM= {
   CAPTION: "CAPTION",
   SCHEDULE: "SCHEDULE",
 }
+
+
+
+export const USERS = {
+  ADMIN: "ADMIN",
+  EMPLOYEE: "EMPLOYEE",
+  MANAGER : "MANAGER"
+}
