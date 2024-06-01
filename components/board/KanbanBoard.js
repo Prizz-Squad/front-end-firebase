@@ -145,6 +145,15 @@ export function KanbanBoard({ cols = defaultCols }) {
     })
   }, [tasks, urlsDepsArray, globalFilter])
 
+  useEffect(() => {
+    // update the task in dialog if it's open, when the task is updated
+    if (!showDialog || !dialogTask) return
+    const updatedTask = tasks.find((task) => task.id === dialogTask.id)
+    if (updatedTask) {
+      setDialogTask(updatedTask)
+    }
+  }, [tasks])
+
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
@@ -529,7 +538,7 @@ const TaskDialog = ({ task, show, setShow }) => {
     <>
       <Dialog open={show} onOpenChange={setShow}>
         <DialogContent className="flex justify-between md:min-w-[45rem] lg:min-w-[60rem] h-[80%] flex-col md:flex-row">
-          <div className="flex flex-col overflow-y-auto flex-1 justify-between">
+          <div className="flex flex-col overflow-y-auto flex-1 justify-between border-r">
             <DialogHeader>
               <DialogTitle>{task?.name || "Title"}</DialogTitle>
               <div className="flex gap-4">
@@ -743,6 +752,9 @@ const TaskDialog = ({ task, show, setShow }) => {
                 >
                   Mark as done
                 </label>
+                <Badge variant={"outline"} className="ml-auto font-semibold">
+                  {task?.department}
+                </Badge>
               </div>
               <div className="flex gap-2">
                 <Select
