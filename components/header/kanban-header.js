@@ -87,7 +87,7 @@ export default function KanbanHeader() {
       ...values,
       userId,
       priority: priority ? priority : "MEDIUM",
-      department: department ? priority : DEPARTMENTSENUM.DESIGN,
+      department: department ? department : DEPARTMENTSENUM.DESIGN,
     };
     console.log(values, "values");
     console.log(validValues, "validValues");
