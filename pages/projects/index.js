@@ -39,18 +39,17 @@ import { createProject, getProjects } from "@/db/collections/project"
 import { useProjectContext } from "@/components/context/project"
 import { Loader2, Plus } from "lucide-react"
 
-
 export const ProjectSchema = z.object({
   name: z.string().nonempty("Name is required"),
   description: z.string().nonempty("Description is required"),
 })
 
 export default function DemoPage() {
-  const [isOpen, setIsOpen] = useState();
-  const [isLoading,setIsLoading] = useState()
+  const [isOpen, setIsOpen] = useState()
+  const [isLoading, setIsLoading] = useState()
 
   const [_data, setdata] = useState([])
-  const { data, addNewProject ,triggerRefetch} = useProjectContext()
+  const { data, addNewProject, triggerRefetch } = useProjectContext()
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
@@ -82,8 +81,7 @@ export default function DemoPage() {
       setIsOpen(false)
     } catch (error) {
       console.error(error)
-    }
-    finally{
+    } finally {
       setIsLoading(false)
     }
   }
@@ -96,10 +94,10 @@ export default function DemoPage() {
 
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild onClick={() => setIsOpen(true)}>
-          <Button variant="outline">
-            <Plus className="h-4" />
-            Create Project
-          </Button>
+            <Button variant="outline">
+              <Plus className="h-4" />
+              Create Project
+            </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <Form {...form}>
@@ -146,7 +144,7 @@ export default function DemoPage() {
                       </FormItem>
                     )}
                   />
-                  
+
                   {/* <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="description" className="text-right">
                   Client
@@ -169,13 +167,13 @@ export default function DemoPage() {
               </div> */}
                 </div>
                 <DialogFooter asChild>
-                <Button type="submit" disabled={isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                
-                Save changes
-                
-              </Button>
-              </DialogFooter>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Save changes
+                  </Button>
+                </DialogFooter>
               </form>
             </Form>
           </DialogContent>

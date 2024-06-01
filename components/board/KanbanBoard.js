@@ -48,6 +48,7 @@ import { createComment, getCommentsSnapshot } from "@/db/collections/comments"
 import { Checkbox } from "../ui/checkbox"
 import { COLUMNS } from "@/constants/enum"
 import { DepsMultiPicker } from "../dropdown/deps-multi-picker"
+import { useRouter } from "next/router"
 
 const defaultCols = [
   {
@@ -64,6 +65,7 @@ const defaultCols = [
   },
 ]
 export function KanbanBoard({ cols = defaultCols }) {
+  const router = useRouter()
   const { snapshotData: tasks, setSnapshotData: setTasks } = useTaskContext()
   const [columns, setColumns] = useState(cols)
   const pickedUpTaskColumn = useRef(null)
@@ -77,11 +79,20 @@ export function KanbanBoard({ cols = defaultCols }) {
   const [dialogTask, setDialogTask] = useState(null)
 
   const [globalFilter, setGlobalFilter] = useState("")
+
+  const urlDeps = router.query.deps
+  const urlsDepsArray = urlDeps ? urlDeps.split(",") : []
+
   const filteredTasks = useMemo(() => {
+    console.log("filteredTasks", tasks)
     return tasks.filter((task) => {
-      return task.name.toLowerCase().includes(globalFilter.toLowerCase())
+      const nameMatch = task.name
+        .toLowerCase()
+        .includes(globalFilter.toLowerCase())
+      const depsMatch = urlsDepsArray.includes(task.department)
+      return nameMatch && depsMatch
     })
-  }, [tasks, globalFilter])
+  }, [tasks, urlsDepsArray, globalFilter])
 
   const sensors = useSensors(
     useSensor(MouseSensor),

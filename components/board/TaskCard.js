@@ -30,6 +30,8 @@ import {
 } from "../ui/dialog"
 import { useState } from "react"
 import { labels } from "@/constants/list"
+import { Avatar } from "@radix-ui/react-avatar"
+import { AvatarFallback, AvatarImage } from "../ui/avatar"
 
 export function TaskCard({ task, isOverlay, onClick }) {
   const {
@@ -76,7 +78,7 @@ export function TaskCard({ task, isOverlay, onClick }) {
         })}
         onClick={onClick}
       >
-        <CardHeader className="px-3 py-3 space-between flex flex-row border-b-2 border-secondary relative">
+        <CardHeader className="px-3 py-3 space-between items-center flex flex-row border-b-2 border-secondary relative">
           <Button
             variant={"ghost"}
             {...attributes}
@@ -86,8 +88,9 @@ export function TaskCard({ task, isOverlay, onClick }) {
             <span className="sr-only">Move task</span>
             <GripVertical />
           </Button>
+          {task.name}
           <Badge variant={"outline"} className="ml-auto font-semibold">
-            Task
+            {task.department}
           </Badge>
           <DropdownMenu>
             <DropdownMenuTrigger  className="ms-2">
@@ -127,7 +130,17 @@ export function TaskCard({ task, isOverlay, onClick }) {
           </DropdownMenu>
         </CardHeader>
         <CardContent className="px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
-          {task.name}
+          <div className="flex mt-4 flex-row justify-between items-center">
+            <p className="">{task.description}</p>
+            <Avatar className="w-8 h-8">
+              <AvatarImage
+                className="rounded-full"
+                src="https://github.com/shadcn.png"
+                alt="@shadcn"
+              />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          </div>
         </CardContent>
       </Card>
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
