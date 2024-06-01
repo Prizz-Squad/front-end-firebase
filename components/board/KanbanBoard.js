@@ -42,6 +42,7 @@ import { Button } from "../ui/button"
 import {
   ArrowRight,
   Bolt,
+  Calendar,
   Captions,
   Edit,
   Paperclip,
@@ -85,6 +86,7 @@ import { UserCombobox } from "../combobox/user"
 import { formatDistanceToNow } from "date-fns"
 import { Timestamp } from "firebase/firestore"
 import Image from "next/image"
+import Wrapper from "../wrapper/wrapper"
 
 const defaultCols = [
   {
