@@ -59,34 +59,41 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ProjectSchema } from "@/pages/projects"
 import { useProjectContext } from "../context/project"
+import { deleteUser, updateUser, updateUserStatus } from "@/db/collections/user"
+import { useUserContext } from "../context/user"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
 
 export function UsersListRowActions({ row }) {
+
+
+  const [role,setRole] = useState()
   const data = row.original
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const [showUpdateDialog, setShowUpdateDialog] = useState(false)
   const [isLoading, setIsLoading] = useState()
-  const { triggerRefetch } = useProjectContext()
-
+  const { triggerRefetch } = useUserContext()
+ 
   const form = useForm({
     resolver: zodResolver(ProjectSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      role: "",
     },
   })
+
 
   const onSubmit = async (values) => {
     const { id } = data
 
     try {
       setIsLoading(true)
-      await updateProject(id, values)
+      await updateUserStatus(id, role)
       toast("Project updated.")
       setShowUpdateDialog(false)
       setIsLoading(false)
       triggerRefetch()
     } catch (error) {
+      console.log(error)
       toast.error("Project updated.")
     } finally {
       setIsLoading(false)
@@ -149,7 +156,7 @@ export function UsersListRowActions({ row }) {
               onClick={async () => {
                 setIsLoading(true)
                 const { id } = data
-                await deleteProject(id)
+                await deleteUser(id)
                 form.reset()
                 triggerRefetch()
                 setShowDeleteDialog(false)
@@ -169,50 +176,31 @@ export function UsersListRowActions({ row }) {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <DialogHeader>
-                <DialogTitle>Update Project</DialogTitle>
+                <DialogTitle>Update the status</DialogTitle>
                 <DialogDescription>
-                  Fill in the form below to update the project.
+                  Fill in the form below to update the status of user.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem className="grid grid-cols-4 items-center gap-4">
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Project X"
-                          className="col-span-3"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="col-span-4" />
-                    </FormItem>
-                  )}
-                />
+              
 
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="grid grid-cols-4 items-center gap-4">
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Marketing campaign"
-                          className="col-span-3"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="col-span-4" />
-                    </FormItem>
-                  )}
-                />
+              <Select  className='w-full' onValueChange={setRole}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={data.role} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>User Role</SelectLabel>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
+                  <SelectItem value="EMPLOYEE">Employee</SelectItem>
+                  <SelectItem value="MANAGER">Manager</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+               
               </div>
               <DialogFooter>
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" onClick={onSubmit} disabled={isLoading}>
                   {isLoading && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}

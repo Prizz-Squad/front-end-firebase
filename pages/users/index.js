@@ -98,52 +98,49 @@ export default function UsersPage() {
           <div className="flex gap-2">
             <DialogTrigger asChild onClick={() => setIsOpen(true)}>
               <Button variant="outline">
-                <Plus className="h-4" />
                 Create User
               </Button>
             </DialogTrigger>
 
-            <Select onValueChange={setRole}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>User Role</SelectLabel>
-                  <SelectItem value="ADMIN">Admin</SelectItem>
-                  <SelectItem value="EMPLOYEE">Employee</SelectItem>
-                  <SelectItem value="MANAGER">Manager</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+         
           </div>
 
           <DialogContent className="sm:max-w-[425px]">
             <SignupForm
               onSubmit={async (data) => {
                 console.log("data", data)
+                setIsLoading(true)
                 try {
                   const { email, password, firstName, lastName } = data
                   await createUserWithEmailAndPassword(auth, email, password)
-
                   createUser({
                     uid: auth.currentUser.uid,
                     email,
                     createdAt: new Date().toISOString(),
                     firstName,
                     lastName,
+                    role
                   })
                   toast("User created successfully")
                   setIsOpen(false)
+                  setIsLoading(false)
                   triggerRefetch()
                 } catch (error) {
                   console.error("Error creating user", error)
                   toast.error("Error creating user")
                 }
+                finally{
+                  setIsLoading(false)
+                }
               }}
+              setRole={setRole}
+              role={role}
+              isLoading={isLoading}
             />
           </DialogContent>
         </Dialog>
+
+      
       </div>
       <DataTable columns={columns} data={data} />
     </div>

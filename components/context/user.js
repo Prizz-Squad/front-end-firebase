@@ -30,7 +30,7 @@ export const UserCtxProvider = ({ children }) => {
         router.push("/dashboard")
       }
     })
-  }, [])
+  }, []) 
 
   useEffect(() => {
     if (!user) return
@@ -38,7 +38,7 @@ export const UserCtxProvider = ({ children }) => {
       console.log("users", users)
       setData(users)
     })
-  }, [user])
+  }, [user,refetch])
 
   const addNewUser = (newUser) => {
     setData((prev) => [newUser, ...prev])
