@@ -4,6 +4,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   onSnapshot,
   setDoc,
@@ -13,9 +14,15 @@ import {
 const coll = collection(db, "tasks")
 
 export const createTask = async (values) => {
-  console.log(values,"colletionvalue")
+  console.log(values, "colletionvalue")
   const docRef = doc(coll)
   await setDoc(docRef, values)
+}
+
+export const getTask = async (id) => {
+  const docRef = doc(coll, id)
+  const snap = getDoc(docRef)
+  return (await snap).data()
 }
 
 export const getTasks = async () => {
@@ -43,8 +50,8 @@ export const changeTaskColId = async (id, columnId) => {
   await updateDoc(doc(coll, id), { columnId })
 }
 
-export const changeTaskPriority = async (id,priority) => {
-  await updateDoc(doc(coll,id), {priority})
+export const changeTaskPriority = async (id, priority) => {
+  await updateDoc(doc(coll, id), { priority })
 }
 
 export const toggleIsTaskCompleted = async (id, isCompleted) => {
@@ -60,4 +67,21 @@ export const getTasksSnapshot = async (callback) => {
     callback(data)
   })
   return () => {}
+}
+
+export const addCaptionToTask = async (id, caption) => {
+  await updateDoc(doc(coll, id), { caption })
+}
+
+export const addImageToTask = async (id, image) => {
+  const task = await getTask(id)
+  const images = task.images || []
+  images.push(image)
+  await updateDoc(doc(coll, id), { images })
+}
+
+export const removeImageFromTask = async (id, image) => {
+  const task = await getTask(id)
+  const images = task.images.filter((img) => img !== image)
+  await updateDoc(doc(coll, id), { images })
 }

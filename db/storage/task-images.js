@@ -3,6 +3,9 @@ import {
   ref as storageRef,
   uploadBytes,
 } from "firebase/storage"
+// const { storage } = require("@/init/firebase")
+import { storage } from "@/init/firebase"
+
 //const { storage } = require("@/init/firebase")
 import { storage } from "@/init/firebase"
 const getRandomId = () => Math.random().toString(36).substr(2, 9)
