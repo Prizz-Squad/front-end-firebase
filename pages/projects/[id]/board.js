@@ -7,22 +7,7 @@ export default function ProjectBoardPage() {
     <div className="ms-2">
       <KanbanHeader />
       <ProjectTabs />
-      <KanbanBoard
-        cols={[
-          {
-            id: "DESIGN",
-            title: "Design",
-          },
-          {
-            id: "CAPTION",
-            title: "Caption",
-          },
-          {
-            id: "SCHEDULE",
-            title: "Schedule",
-          },
-        ]}
-      />
+      <KanbanBoard />
     </div>
   )
 }
