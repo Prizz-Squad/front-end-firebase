@@ -6,6 +6,7 @@ import {
   doc,
   getDocs,
   onSnapshot,
+  orderBy,
   query,
   setDoc,
   updateDoc,
@@ -25,7 +26,7 @@ export const deleteComment = async (id) => {
 
 export const getCommentsSnapshot = async (callback, { taskId }) => {
   console.log(taskId)
-  const qry = query(coll, where("taskId", "==", taskId))
+  const qry = query(coll, where("taskId", "==", taskId), orderBy("date", "asc"))
   onSnapshot(qry, (snapshot) => {
     const data = snapshot.docs.map((doc) => ({
       id: doc.id,

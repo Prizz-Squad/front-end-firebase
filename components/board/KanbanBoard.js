@@ -465,7 +465,6 @@ const TaskDialog = ({ task, show, setShow }) => {
     uploadFileToBucket({
       imageUpload: file,
       onSuccess: (url) => {
-        console.log(url)
         toast("File uploaded successfully")
         addImageToTask(task.id, url)
 
@@ -495,9 +494,6 @@ const TaskDialog = ({ task, show, setShow }) => {
       { taskId: task.id }
     )
   }, [task])
-
-
-
 
   const handleCreateComment = ({ text }) => {
     createComment({
@@ -537,10 +533,6 @@ const TaskDialog = ({ task, show, setShow }) => {
       toast.error("Priority has an error")
     }
   }
-
-
-
-
 
   return (
     <>
@@ -606,7 +598,6 @@ const TaskDialog = ({ task, show, setShow }) => {
                   <div className="mb-3 border-b pb-2">
                     <h4 className="text-sm font-semibold mt-2">Caption</h4>
                     <div className="flex gap-x-2 mt-4 items-center flex-row">
-                      {console.log("task", task)}
                       {caption || task?.caption}
                     </div>
                   </div>
@@ -623,88 +614,87 @@ const TaskDialog = ({ task, show, setShow }) => {
                   </div>
                 </div>
                 {comments.map((comment) => {
-                  
-                   const commentUser = data.find((element) => element.uid === comment.userId)
-                   return(
-                  
-                  
-                  <div
-                    key={comment.id}
-                    className="flex justify-between items-center mt-4"
-                  >
-
-                    <div className="flex flex-row gap-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="overflow-hidden rounded-full hover:ring-1 hover:ring-black"
-                      >
-                        <Avatar>
-                          <AvatarFallback className=" ring-2 ring-black p-4">
-                            {commentUser?.firstName?.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                      </Button>
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold">
-                            {commentUser && commentUser.firstName}
-                          </p>
-                          <span className="text-sm font-light">
-                            {formatDistanceToNow(
-                              new Timestamp(
-                                comment.date.seconds,
-                                comment.date.nanoseconds
-                              ).toDate(),
-                              {
-                                addSuffix: true,
-                              }
-                            )}
-                          </span>
-                        </div>
-                        {/* <p>{comment.text}</p> */}
-
-                        {editModeCommentId === comment.id ? (
-                          <div className=" w-[340px] flex flex-row ">
-                            <Textarea
-                              className="  w-full h-8"
-                              value={comment.text}
-                              onChange={(e) => {
-                                const { value } = e.target
-                                setComments((comments) =>
-                                  comments.map((c) =>
-                                    c.id === comment.id
-                                      ? { ...c, text: value }
-                                      : c
-                                  )
-                                )
-                              }}
-                              onKeyDown={(e) => {
-                                const { value } = e.target
-                                if (e.key !== "Enter" || !value) return
-                                setEditModeCommentId("")
-                              }}
-                            />
+                  const commentUser = data.find(
+                    (element) => element.uid === comment.userId
+                  )
+                  return (
+                    <div
+                      key={comment.id}
+                      className="flex justify-between items-center mt-4"
+                    >
+                      <div className="flex flex-row gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="overflow-hidden rounded-full hover:ring-1 hover:ring-black"
+                        >
+                          <Avatar>
+                            <AvatarFallback className=" ring-2 ring-black p-4">
+                              {commentUser?.firstName?.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        </Button>
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <p className="font-semibold">
+                              {commentUser && commentUser.firstName}
+                            </p>
+                            <span className="text-sm font-light">
+                              {formatDistanceToNow(
+                                new Timestamp(
+                                  comment.date.seconds,
+                                  comment.date.nanoseconds
+                                ).toDate(),
+                                {
+                                  addSuffix: true,
+                                }
+                              )}
+                            </span>
                           </div>
-                        ) : (
-                          <p>{comment.text}</p>
+                          {/* <p>{comment.text}</p> */}
+
+                          {editModeCommentId === comment.id ? (
+                            <div className=" w-[340px] flex flex-row ">
+                              <Textarea
+                                className="  w-full h-8"
+                                value={comment.text}
+                                onChange={(e) => {
+                                  const { value } = e.target
+                                  setComments((comments) =>
+                                    comments.map((c) =>
+                                      c.id === comment.id
+                                        ? { ...c, text: value }
+                                        : c
+                                    )
+                                  )
+                                }}
+                                onKeyDown={(e) => {
+                                  const { value } = e.target
+                                  if (e.key !== "Enter" || !value) return
+                                  setEditModeCommentId("")
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            <p>{comment.text}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mr-2">
+                        {editModeCommentId !== comment.id && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setEditModeCommentId(comment.id)}
+                          >
+                            <Edit className="h-4" />
+                          </Button>
                         )}
                       </div>
                     </div>
-
-                    <div className="mr-2">
-                      {editModeCommentId !== comment.id && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setEditModeCommentId(comment.id)}
-                        >
-                          <Edit className="h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                )})}
+                  )
+                })}
                 <div className="mt-4 me-4 flex gap-x-4 flex-row">
                   <div>
                     <Avatar>
@@ -739,9 +729,7 @@ const TaskDialog = ({ task, show, setShow }) => {
                   onCheckedChange={async (checked) => {
                     try {
                       setIsCompleted(checked)
-                      console.log("checked", checked)
                       await toggleIsTaskCompleted(task.id, checked)
-                      console.log("task", task)
                       createNotification({
                         subject: "Task Completed",
                         text: `Task ${task.name} has been marked as ${
@@ -822,7 +810,6 @@ const TaskDialog = ({ task, show, setShow }) => {
                   </Avatar>
                   <UserCombobox
                     onSelect={(newUserId) => {
-                      console.log("newUserId", newUserId)
                       changeTaskAssignee(task.id, newUserId).then(() => {
                         toast("Assignee changed")
                         createNotification({
