@@ -98,14 +98,14 @@ export default function UsersPage() {
         </div>
 
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger asChild onClick={() => setIsOpen(true)}>
-            <Wrapper requiredRight={[USERS.ADMIN,USERS.MANAGER]}>
+         <Wrapper requiredRight={[USERS.ADMIN,USERS.MANAGER]}>
+         <DialogTrigger asChild onClick={() => setIsOpen(true)}>
             <Button variant="outline">
               <Plus className="h-4" />
               Create Project
             </Button>
-            </Wrapper>
           </DialogTrigger>
+         </Wrapper>
           <DialogContent className="sm:max-w-[425px]">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
