@@ -10,7 +10,7 @@ const Wrapper = ({ requiredRight, children }) => {
   useEffect(() => {
     const hasPermission = requiredRight.includes(userData?.role)
     setHasPermission(hasPermission)
-  }, [userData])
+  }, [requiredRight, userData])
 
   return hasPermission ? children : ""
 }

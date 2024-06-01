@@ -55,15 +55,9 @@ export function TaskCard({ task, isOverlay, onClick }) {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const { user,data } = useUserContext()
+  const { user, data } = useUserContext()
 
-
-
-  
-  const userName = data.find((element) => element.uid === task.assignee) 
-
-  console.log(userName,"adssad")
-
+  const userName = data.find((element) => element.uid === task.assignee)
 
   const style = {
     transition,
@@ -104,11 +98,15 @@ export function TaskCard({ task, isOverlay, onClick }) {
             {task.department}
           </Badge>
           <DropdownMenu>
-            <DropdownMenuTrigger  className="ms-2">
+            <DropdownMenuTrigger className="ms-2">
               <Ellipsis />
             </DropdownMenuTrigger>
-            <DropdownMenuContent onClick={(e) => e.stopPropagation()}  align="end" className="w-[160px]">
-              <DropdownMenuItem >Edit</DropdownMenuItem>
+            <DropdownMenuContent
+              onClick={(e) => e.stopPropagation()}
+              align="end"
+              className="w-[160px]"
+            >
+              <DropdownMenuItem>Edit</DropdownMenuItem>
               <DropdownMenuItem>Make a copy</DropdownMenuItem>
               <DropdownMenuItem>Favorite</DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -143,15 +141,13 @@ export function TaskCard({ task, isOverlay, onClick }) {
         <CardContent className="px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
           <div className="flex mt-4 flex-row justify-between items-center">
             <p className="">{task.description}</p>
-           <div className=" aspect-square">
-           <Avatar
-          >
-        
-            <AvatarFallback className=" ring-1 ring-black p-4">
-              {userName?.firstName?.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-           </div>
+            <div className=" aspect-square">
+              <Avatar>
+                <AvatarFallback className=" ring-1 ring-black p-4">
+                  {userName?.firstName?.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </div>
           </div>
         </CardContent>
       </Card>
