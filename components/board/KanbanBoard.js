@@ -64,6 +64,8 @@ import { createNotification } from "@/db/collections/notification"
 import { useProjectContext } from "../context/project"
 import { useUserContext } from "../context/user"
 import { UserCombobox } from "../combobox/user"
+import { formatDistanceToNow } from "date-fns"
+import { Timestamp } from "firebase/firestore"
 
 const defaultCols = [
   {
@@ -82,7 +84,6 @@ const defaultCols = [
 export function KanbanBoard({ cols = defaultCols }) {
   //user data
   const { data } = useUserContext()
-  console.log(data, "userdata")
 
   const router = useRouter()
   const { userId, user } = useUserContext()
@@ -91,6 +92,9 @@ export function KanbanBoard({ cols = defaultCols }) {
   const [columns, setColumns] = useState(cols)
   const pickedUpTaskColumn = useRef(null)
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns])
+
+
+
 
   const [activeColumn, setActiveColumn] = useState(null)
 
@@ -416,13 +420,17 @@ export function KanbanBoard({ cols = defaultCols }) {
 const TaskDialog = ({ task, show, setShow }) => {
   const fileInput = useRef(null)
   const { currentProjectId } = useProjectContext()
-  const { userId, user } = useUserContext()
+  const { userId, user,data } = useUserContext()
   const [inputValue, setInputValue] = useState("")
   const [comments, setComments] = useState([])
   const [isCompleted, setIsCompleted] = useState(task?.isCompleted || false)
 
   const [showCaptionsDialog, setShowCaptionsDialog] = useState(false)
   const [caption, setCaption] = useState("")
+
+
+  const userName = data.find((element) => element.uid === userId)
+
 
   const handleButtonClick = () => {
     fileInput.current.click()
@@ -470,7 +478,9 @@ const TaskDialog = ({ task, show, setShow }) => {
       taskId: task.id,
       text,
       userId: "shadcn",
+      date: new Date()  
     })
+
   }
   const onSubmitUpdatePriority = async (selectedValue) => {
     try {
@@ -562,15 +572,26 @@ const TaskDialog = ({ task, show, setShow }) => {
                       </Avatar>
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                          <p className="font-semibold">Shad</p>
+                          <p className="font-semibold">{userName && userName.firstName}</p>
                           <span className="text-sm font-light">
-                            10 hours ago
+                          {/* {formatDistanceToNow(new Date(new Timestamp(comment.date)), {
+                    addSuffix: true,
+                  })} */}
+
+                         {
+                           formatDistanceToNow(new Timestamp(comment.date.seconds,comment.date.nanoseconds).toDate(),{
+                            addSuffix: true
+                           }) 
+                         }
                           </span>
                         </div>
                         {/* <p>{comment.text}</p> */}
+
+                      
                         {editModeCommentId === comment.id ? (
+                          <div className=" w-[340px] flex flex-row ">
                           <Textarea
-                            className="w-full h-8"
+                            className="  w-full h-8"
                             value={comment.text}
                             onChange={(e) => {
                               const { value } = e.target
@@ -588,6 +609,7 @@ const TaskDialog = ({ task, show, setShow }) => {
                               setEditModeCommentId("")
                             }}
                           />
+                          </div>
                         ) : (
                           <p>{comment.text}</p>
                         )}

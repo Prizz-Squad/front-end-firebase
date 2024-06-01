@@ -36,6 +36,7 @@ import { SelectGroup } from "@radix-ui/react-select"
 import { COLUMNS, DEPARTMENTSENUM } from "@/constants/enum"
 import { Loader2 } from "lucide-react"
 import { useUserContext } from "../context/user"
+import { UserCombobox } from "../combobox/user"
 
 const TaskSchema = z.object({
   name: z.string().nonempty("Please write the name"),
@@ -47,6 +48,8 @@ export default function KanbanHeader() {
   const { userId } = useUserContext()
   const [isOpen, setIsOpen] = useState()
   const [isLoading, setIsLoading] = useState()
+  const [assigne,setAssigne] = useState()
+
 
   const defaultCols = [
     {
@@ -79,6 +82,7 @@ export default function KanbanHeader() {
       name: "",
       description: "",
       columnId: COLUMNS.TODO,
+      assignee: ""
     },
   })
 
@@ -89,6 +93,7 @@ export default function KanbanHeader() {
       userId,
       priority: priority ? priority : "MEDIUM",
       department: department ? department : DEPARTMENTSENUM.DESIGN,
+      assignee: assigne
     }
 
     try {
@@ -201,7 +206,18 @@ export default function KanbanHeader() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="w-full items-center flex flex-row justify-between">
                 
+                <p className=" font-semibold text-sm">Assigne</p>
+                <UserCombobox
+                  onSelect={(newUserId) => {
+                    setAssigne(newUserId)
+                   
+                  }}
+                  onlyEmployee
+                />
+                
+              </div>
               </div>
               <DialogFooter asChild>
                 <Button type="submit" disabled={isLoading}>

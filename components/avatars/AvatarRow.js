@@ -14,8 +14,8 @@ const AvatarRow = ({ setSelectedEmployee, selectedEmployee, data }) => {
                   : [...previous, dt.uid]
               )
             }
-            className={`ring-white ring-2 cursor-pointer hover:-translate-y-2 transition-transform duration-150 ease-in-out ${
-              selectedEmployee.includes(dt.uid) ? "ring-blue-400" : ""
+            className={`ring-white ring-1 cursor-pointer hover:ring-black hover:-translate-y-2 transition-transform duration-150 ease-in-out ${
+              selectedEmployee.includes(dt.uid) ? "ring-black" : ""
             }`}
             style={{ margin: "-5px" }}
           >

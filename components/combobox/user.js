@@ -34,7 +34,6 @@ export function UserCombobox({ userId, onSelect, onlyEmployee }) {
 
   const temporerOne= data.find((user) => user.uid === temporerEmployee)
 
-  console.log(temporerOne,"temporer")
 
   const finalData = onlyEmployee
     ? data.filter((user) => user.role === USERS.EMPLOYEE)
@@ -47,9 +46,9 @@ export function UserCombobox({ userId, onSelect, onlyEmployee }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-[75%] justify-between"
         >
-          {user &&  temporerOne?.email ? temporerOne?.email : user.email}
+          {user ?  temporerOne?.email ? temporerOne?.email : user?.email : temporerOne?.email ? temporerOne?.email : "Select a assigne"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
