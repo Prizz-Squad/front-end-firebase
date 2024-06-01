@@ -49,6 +49,7 @@ import { Checkbox } from "../ui/checkbox"
 import { COLUMNS } from "@/constants/enum"
 import { DepsMultiPicker } from "../dropdown/deps-multi-picker"
 import { useRouter } from "next/router"
+import AvatarRow from "../avatars/AvatarRow"
 
 const defaultCols = [
   {
@@ -83,6 +84,9 @@ export function KanbanBoard({ cols = defaultCols }) {
   const urlDeps = router.query.deps
   const urlsDepsArray = urlDeps ? urlDeps.split(",") : []
 
+  const [selectedEmployee,setSelectedEmployee] = useState([])
+
+
   const filteredTasks = useMemo(() => {
     console.log("filteredTasks", tasks)
     return tasks.filter((task) => {
@@ -103,6 +107,7 @@ export function KanbanBoard({ cols = defaultCols }) {
   )
 
 
+  
 
 
   function getDraggingTaskData(taskId, columnId) {
@@ -220,7 +225,9 @@ export function KanbanBoard({ cols = defaultCols }) {
           onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm my-4"
         />
+        <AvatarRow setSelectedEmployee={setSelectedEmployee} selectedEmployee={selectedEmployee}/>
         <DepsMultiPicker />
+        
       </div>
       <DndContext
         accessibility={{
@@ -568,7 +575,7 @@ const TaskDialog = ({ task, show, setShow }) => {
               </Select>
               <Select onValueChange={(selectedValue)=> onSubmitUpdatePriority(selectedValue) }>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder={task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}/>
+                  <SelectValue placeholder={ task && task.priority && task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}/>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
