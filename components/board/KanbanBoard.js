@@ -424,6 +424,18 @@ const TaskDialog = ({ task, show, setShow }) => {
         console.log(url)
         toast("File uploaded successfully")
         addImageToTask(task.id, url)
+
+        createNotification({
+          subject: "Task Image Added",
+          text: `An image has been added to ${task.name} by ${user.email}`, //${userId}
+          name: user.firstName || user.email,
+          email: user.email,
+          labels: ["Image"],
+          userId,
+          projectId: currentProjectId,
+          taskId: task.id,
+          imageLink: url,
+        })
       },
     })
   }
@@ -732,6 +744,17 @@ const TaskDialog = ({ task, show, setShow }) => {
                 setShowCaptionsDialog(false)
                 toast("Caption added")
                 addCaptionToTask(task.id, caption)
+                createNotification({
+                  subject: "Task Caption Added",
+                  text: `A caption has been added to ${task.name} by ${user.email}`, //${userId}
+                  name: user.firstName || user.email,
+                  email: user.email,
+                  labels: ["Caption", "New"],
+                  userId,
+                  projectId: currentProjectId,
+                  taskId: task.id,
+                  caption,
+                })
               }}
             >
               Add caption
