@@ -13,6 +13,7 @@ import {
 const coll = collection(db, "tasks")
 
 export const createTask = async (values) => {
+  console.log(values,"colletionvalue")
   const docRef = doc(coll)
   await setDoc(docRef, values)
 }
@@ -41,6 +42,7 @@ export const changeTaskStatus = async (id, status) => {
 export const changeTaskColId = async (id, columnId) => {
   await updateDoc(doc(coll, id), { columnId })
 }
+
 
 export const getTasksSnapshot = async (callback) => {
   onSnapshot(coll, (snapshot) => {

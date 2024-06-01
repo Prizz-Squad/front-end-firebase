@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/form"
 import { createProject, getProjects } from "@/db/collections/project"
 import { useProjectContext } from "@/components/context/project"
+import { Plus } from "lucide-react"
 
 async function getData() {
   // Fetch data from your API here.
@@ -110,7 +111,10 @@ export default function DemoPage() {
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="outline">Create Project</Button>
+          <Button variant="outline">
+            <Plus className="h-4" />
+            Create Project
+          </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <Form {...form}>
@@ -157,6 +161,7 @@ export default function DemoPage() {
                       </FormItem>
                     )}
                   />
+                  
                   {/* <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="description" className="text-right">
                   Client

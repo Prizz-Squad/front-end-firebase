@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription
 } from "../ui/form"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { useForm } from "react-hook-form"
@@ -25,6 +33,7 @@ import { z } from "zod"
 import { createTask } from "@/db/collections/task"
 import { userId } from "@/dummy-data/users"
 import { toast } from "sonner"
+import { SelectGroup } from "@radix-ui/react-select"
 
 const TaskSchema = z.object({
   name: z.string(),
@@ -33,12 +42,22 @@ const TaskSchema = z.object({
 })
 
 export default function KanbanHeader() {
+
+  const [priority,setPriority] = useState()
+
+
+  const onChangePriority = (value) => {
+    setPriority((value))
+    console.log(priority,"pri")
+  }
+
   const form = useForm({
     resolver: zodResolver(TaskSchema),
     defaultValues: {
       name: "",
       description: "",
       columnId: "",
+      priority: ""
     },
   })
 
@@ -48,7 +67,8 @@ export default function KanbanHeader() {
       userId,
       status: "todo", //TODO: what is the status
     }
-    console.log(validValues)
+    console.log(values,"values")
+    console.log(validValues,"validValues")
 
     await createTask(validValues)
     toast("Task created.")
@@ -129,6 +149,22 @@ export default function KanbanHeader() {
                     </FormItem>
                   )}
                 />
+               
+               <div className="w-full items-center flex flex-row justify-between">
+               <p className=" font-semibold text-sm">Piority</p>
+               <Select onValueChange={onChangePriority}>
+                <SelectTrigger className="w-3/4">
+                  <SelectValue placeholder="Medium" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+               </div>
               </div>
               <DialogFooter>
                 <Button type="submit">Save changes</Button>
