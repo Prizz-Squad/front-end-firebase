@@ -25,7 +25,8 @@ export default function SignupPage() {
               email,
               createdAt: new Date().toISOString(),
               firstName,
-              lastName
+              lastName,
+              role
             })
           } catch (error) {
             console.error("Error creating user", error)
