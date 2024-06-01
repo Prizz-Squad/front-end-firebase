@@ -61,19 +61,25 @@ import { ProjectSchema } from "@/pages/projects"
 import { useProjectContext } from "../context/project"
 import { deleteUser, updateUser, updateUserStatus } from "@/db/collections/user"
 import { useUserContext } from "../context/user"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select"
 
 export function UsersListRowActions({ row }) {
-
-
-  const [role,setRole] = useState()
+  const [role, setRole] = useState()
   const data = row.original
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const [showUpdateDialog, setShowUpdateDialog] = useState(false)
   const [isLoading, setIsLoading] = useState()
   const { triggerRefetch } = useUserContext()
- 
+
   const form = useForm({
     resolver: zodResolver(ProjectSchema),
     defaultValues: {
@@ -81,13 +87,12 @@ export function UsersListRowActions({ row }) {
     },
   })
 
-
   const onSubmit = async (values) => {
-    const { id } = data
+    const { uid } = data
 
     try {
       setIsLoading(true)
-      await updateUserStatus(id, role)
+      await updateUserStatus(uid, role)
       toast("Project updated.")
       setShowUpdateDialog(false)
       setIsLoading(false)
@@ -155,8 +160,8 @@ export function UsersListRowActions({ row }) {
               variant="destructive"
               onClick={async () => {
                 setIsLoading(true)
-                const { id } = data
-                await deleteUser(id)
+                const { uid } = data
+                await deleteUser(uid)
                 form.reset()
                 triggerRefetch()
                 setShowDeleteDialog(false)
@@ -182,22 +187,19 @@ export function UsersListRowActions({ row }) {
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
-              
-
-              <Select  className='w-full' onValueChange={setRole}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder={data.role} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>User Role</SelectLabel>
-                  <SelectItem value="ADMIN">Admin</SelectItem>
-                  <SelectItem value="EMPLOYEE">Employee</SelectItem>
-                  <SelectItem value="MANAGER">Manager</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-               
+                <Select className="w-full" onValueChange={setRole}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={data.role} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>User Role</SelectLabel>
+                      <SelectItem value="ADMIN">Admin</SelectItem>
+                      <SelectItem value="EMPLOYEE">Employee</SelectItem>
+                      <SelectItem value="MANAGER">Manager</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
               <DialogFooter>
                 <Button type="submit" onClick={onSubmit} disabled={isLoading}>
