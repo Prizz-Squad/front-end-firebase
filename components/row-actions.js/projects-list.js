@@ -74,12 +74,14 @@ export function ProjectsListRowActions({ row }) {
     defaultValues: {
       name: "",
       description: "",
+      userId: ""
     },
   })
 
   const onSubmit = async (values) => {
     const { id } = data
    
+    console.log(values,"valuesUserId")
     try {
       setIsLoading(true)
       await updateProject(id, values)
