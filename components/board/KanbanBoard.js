@@ -25,12 +25,13 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog"
 import { Button } from "../ui/button"
-import { Bolt, Edit, Paperclip, PaperclipIcon } from "lucide-react"
+import { Bolt, Captions, Edit, Paperclip, PaperclipIcon } from "lucide-react"
 import { Textarea } from "../ui/textarea"
 import {
   Select,
@@ -44,6 +45,8 @@ import { toBase64 } from "@/utils/files"
 import { toast } from "sonner"
 import { useTaskContext } from "../context/tasks"
 import {
+  addCaptionToTask,
+  addImageToTask,
   changeTaskColId,
   changeTaskPriority,
   toggleIsTaskCompleted,
@@ -384,6 +387,9 @@ const TaskDialog = ({ task, show, setShow }) => {
   const [comments, setComments] = useState([])
   const [isCompleted, setIsCompleted] = useState(task?.isCompleted || false)
 
+  const [showCaptionsDialog, setShowCaptionsDialog] = useState(false)
+  const [caption, setCaption] = useState("")
+
   const handleButtonClick = () => {
     fileInput.current.click()
   }
@@ -396,6 +402,7 @@ const TaskDialog = ({ task, show, setShow }) => {
       onSuccess: (url) => {
         console.log(url)
         toast("File uploaded successfully")
+        addImageToTask(task.id, url)
       },
     })
   }
@@ -428,226 +435,263 @@ const TaskDialog = ({ task, show, setShow }) => {
     }
   }
   return (
-    <Dialog open={show} onOpenChange={setShow}>
-      <DialogContent className="flex justify-between p-14 md:min-w-[45rem] lg:min-w-[60rem] h-[80%] flex-col md:flex-row">
-        <div className="flex flex-col overflow-y-auto flex-1 justify-between">
-          <DialogHeader>
-            <DialogTitle>{task?.title || "Title"}</DialogTitle>
-            <div>
-              <input
-                type="file"
-                style={{ display: "none" }}
-                ref={fileInput}
-                onChange={handleFileChange}
-              />
-              <Button
-                variant="ghost"
-                className="px-1"
-                onClick={handleButtonClick}
-              >
-                <PaperclipIcon size={20} />
-                Attach a file
-              </Button>
-            </div>
-            <DialogDescription>{task?.name || "Content"}</DialogDescription>
-          </DialogHeader>
-          <div>
-            <div className="mb-5">
-              <h4 className="text-sm font-semibold mt-2">Comments</h4>
-              <div className="flex gap-x-2 mt-4 items-center flex-row">
-                <p className="">Show:</p>
-                <div className="flex flex-row gap-x-2">
-                  <Badge>All</Badge>
-                  <Badge>Comments</Badge>
-                  <Badge>History</Badge>
-                </div>
-              </div>
-              {comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="flex justify-between items-center mt-4"
+    <>
+      <Dialog open={show} onOpenChange={setShow}>
+        <DialogContent className="flex justify-between p-14 md:min-w-[45rem] lg:min-w-[60rem] h-[80%] flex-col md:flex-row">
+          <div className="flex flex-col overflow-y-auto flex-1 justify-between">
+            <DialogHeader>
+              <DialogTitle>{task?.name || "Title"}</DialogTitle>
+              <div className="flex gap-4">
+                <input
+                  type="file"
+                  style={{ display: "none" }}
+                  ref={fileInput}
+                  onChange={handleFileChange}
+                />
+                <Button
+                  variant="ghost"
+                  className="px-1"
+                  onClick={handleButtonClick}
                 >
-                  <div className="flex flex-row gap-2">
-                    <Avatar className="w-8 h-8">
-                      <AvatarImage
-                        src="https://github.com/shadcn.png"
-                        alt="@shadcn"
-                      />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col">
-                      <div className="flex items-center gap-2">
-                        <p className="font-semibold">Shad</p>
-                        <span className="text-sm font-light">10 hours ago</span>
-                      </div>
-                      {/* <p>{comment.text}</p> */}
-                      {editModeCommentId === comment.id ? (
-                        <Textarea
-                          className="w-full h-8"
-                          value={comment.text}
-                          onChange={(e) => {
-                            const { value } = e.target
-                            setComments((comments) =>
-                              comments.map((c) =>
-                                c.id === comment.id ? { ...c, text: value } : c
-                              )
-                            )
-                          }}
-                          onKeyDown={(e) => {
-                            const { value } = e.target
-                            if (e.key !== "Enter" || !value) return
-                            setEditModeCommentId("")
-                          }}
+                  <PaperclipIcon size={20} />
+                  Attach a file
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  className="px-1"
+                  onClick={() => setShowCaptionsDialog(true)}
+                >
+                  <Captions size={20} />
+                  Add caption
+                </Button>
+              </div>
+              <DialogDescription>{task?.name || "Content"}</DialogDescription>
+            </DialogHeader>
+            <div>
+              <div className="mb-5">
+                <h4 className="text-sm font-semibold mt-2">Comments</h4>
+                <div className="flex gap-x-2 mt-4 items-center flex-row">
+                  <p className="">Show:</p>
+                  <div className="flex flex-row gap-x-2">
+                    <Badge>All</Badge>
+                    <Badge>Comments</Badge>
+                    <Badge>History</Badge>
+                  </div>
+                </div>
+                {comments.map((comment) => (
+                  <div
+                    key={comment.id}
+                    className="flex justify-between items-center mt-4"
+                  >
+                    <div className="flex flex-row gap-2">
+                      <Avatar className="w-8 h-8">
+                        <AvatarImage
+                          src="https://github.com/shadcn.png"
+                          alt="@shadcn"
                         />
-                      ) : (
-                        <p>{comment.text}</p>
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-2">
+                          <p className="font-semibold">Shad</p>
+                          <span className="text-sm font-light">
+                            10 hours ago
+                          </span>
+                        </div>
+                        {/* <p>{comment.text}</p> */}
+                        {editModeCommentId === comment.id ? (
+                          <Textarea
+                            className="w-full h-8"
+                            value={comment.text}
+                            onChange={(e) => {
+                              const { value } = e.target
+                              setComments((comments) =>
+                                comments.map((c) =>
+                                  c.id === comment.id
+                                    ? { ...c, text: value }
+                                    : c
+                                )
+                              )
+                            }}
+                            onKeyDown={(e) => {
+                              const { value } = e.target
+                              if (e.key !== "Enter" || !value) return
+                              setEditModeCommentId("")
+                            }}
+                          />
+                        ) : (
+                          <p>{comment.text}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mr-2">
+                      {editModeCommentId !== comment.id && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setEditModeCommentId(comment.id)}
+                        >
+                          <Edit className="h-4" />
+                        </Button>
                       )}
                     </div>
                   </div>
+                ))}
+                <div className="mt-4 me-4 flex gap-x-4 flex-row">
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage
+                      src="https://github.com/shadcn.png"
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <Textarea
+                    className="w-full h-8"
+                    placeholder="Write a comment"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    // on enter key press
+                    onKeyDown={(e) => {
+                      const { value } = e.target
+                      if (e.key !== "Enter" || !value) return
+                      handleCreateComment({ text: value })
+                      setInputValue("")
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
 
-                  <div className="mr-2">
-                    {editModeCommentId !== comment.id && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setEditModeCommentId(comment.id)}
-                      >
-                        <Edit className="h-4" />
-                      </Button>
-                    )}
+          <div className="flex flex-col flex-1 justify-around">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <Checkbox
+                  id="isCompleted"
+                  onCheckedChange={(checked) => {
+                    try {
+                      setIsCompleted(checked)
+                      toggleIsTaskCompleted(task.id, checked)
+                    } catch (error) {
+                      console.error(error)
+                    }
+                  }}
+                  checked={isCompleted}
+                />
+                <label
+                  htmlFor="isCompleted"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Mark as done
+                </label>
+              </div>
+              <div className="flex gap-2">
+                <Select>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="In Progress" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="in-progress">In Progress</SelectItem>
+                      <SelectItem value="todo">To-Do</SelectItem>
+                      <SelectItem value="done">Done</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <Select
+                  onValueChange={(selectedValue) =>
+                    onSubmitUpdatePriority(selectedValue)
+                  }
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue
+                      placeholder={
+                        task?.priority.charAt(0).toUpperCase() +
+                        task?.priority.slice(1)
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="low">Low</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="m-1">
+                <p className="font-bold text-xl mt-2">Details</p>
+
+                <div className="flex mt-4 flex-row justify-between items-center">
+                  <p className="">Assigne</p>
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage
+                      src="https://github.com/shadcn.png"
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                </div>
+                <div className="flex mt-4  flex-row justify-between items-center">
+                  <p className="mr-4">Label</p>
+                  <div className="flex flex-row gap-x-2 flex-wrap">
+                    <Badge>Bug</Badge>
+                    <Badge>Feature</Badge>
+                    <Badge>Documentation</Badge>
                   </div>
                 </div>
-              ))}
-              <div className="mt-4 me-4 flex gap-x-4 flex-row">
-                <Avatar className="w-8 h-8">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <Textarea
-                  className="w-full h-8"
-                  placeholder="Write a comment"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  // on enter key press
-                  onKeyDown={(e) => {
-                    const { value } = e.target
-                    if (e.key !== "Enter" || !value) return
-                    handleCreateComment({ text: value })
-                    setInputValue("")
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col flex-1 justify-around">
-          <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <Checkbox
-                id="isCompleted"
-                onCheckedChange={(checked) => {
-                  try {
-                    setIsCompleted(checked)
-                    toggleIsTaskCompleted(task.id, checked)
-                  } catch (error) {
-                    console.error(error)
-                  }
-                }}
-                checked={isCompleted}
-              />
-              <label
-                htmlFor="isCompleted"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Mark as done
-              </label>
-            </div>
-            <div className="flex gap-2">
-              <Select>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="In Progress" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="in-progress">In Progress</SelectItem>
-                    <SelectItem value="todo">To-Do</SelectItem>
-                    <SelectItem value="done">Done</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <Select
-                onValueChange={(selectedValue) =>
-                  onSubmitUpdatePriority(selectedValue)
-                }
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue
-                    placeholder={
-                      task?.priority.charAt(0).toUpperCase() +
-                      task?.priority.slice(1)
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="low">Low</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="m-1">
-              <p className="font-bold text-xl mt-2">Details</p>
-
-              <div className="flex mt-4 flex-row justify-between items-center">
-                <p className="">Assigne</p>
-                <Avatar className="w-8 h-8">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-              </div>
-              <div className="flex mt-4  flex-row justify-between items-center">
-                <p className="mr-4">Label</p>
-                <div className="flex flex-row gap-x-2 flex-wrap">
-                  <Badge>Bug</Badge>
-                  <Badge>Feature</Badge>
-                  <Badge>Documentation</Badge>
+                <div className="flex mt-4 flex-row justify-between items-center">
+                  <p className="">Reporter</p>
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage
+                      src="https://github.com/shadcn.png"
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>{" "}
                 </div>
               </div>
-              <div className="flex mt-4 flex-row justify-between items-center">
-                <p className="">Reporter</p>
-                <Avatar className="w-8 h-8">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>{" "}
+            </div>
+            <div className="flex flex-row items-start justify-between ">
+              <div className="flex text-sm  flex-col gap-y-2">
+                <p>Created 10 hours ago</p>
+                <p>Updated 9 hours ago</p>
+              </div>
+
+              <div className="flex cursor-pointer flex-row text-center justify-center items-center">
+                <Bolt className="w-5 h-5" />
+                <p className="text-sm ml-1 mb-1">Configure</p>
               </div>
             </div>
           </div>
-          <div className="flex flex-row items-start justify-between ">
-            <div className="flex text-sm  flex-col gap-y-2">
-              <p>Created 10 hours ago</p>
-              <p>Updated 9 hours ago</p>
-            </div>
-
-            <div className="flex cursor-pointer flex-row text-center justify-center items-center">
-              <Bolt className="w-5 h-5" />
-              <p className="text-sm ml-1 mb-1">Configure</p>
-            </div>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={showCaptionsDialog} onOpenChange={setShowCaptionsDialog}>
+        <DialogContent className="flex items-end p-14 flex-col md:flex-row">
+          <Textarea
+            className="w-full h-8"
+            placeholder="Write a caption"
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
+          />
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowCaptionsDialog(false)
+                toast("Caption added")
+                addCaptionToTask(task.id, caption)
+              }}
+            >
+              Add caption
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
