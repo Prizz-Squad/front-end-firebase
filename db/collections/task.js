@@ -93,3 +93,10 @@ export const removeImageFromTask = async (id, image) => {
   const images = task.images.filter((img) => img !== image)
   await updateDoc(doc(coll, id), { images })
 }
+
+export const addImagePostDateToTask = async ({ id, image, date }) => {
+  const task = await getTask(id)
+  const imageToDates = task.imageToDates || {}
+  imageToDates[image] = date
+  await updateDoc(doc(coll, id), { imageToDates })
+}

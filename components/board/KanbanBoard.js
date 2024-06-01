@@ -46,6 +46,7 @@ import {
   Edit,
   Paperclip,
   PaperclipIcon,
+  Timer,
 } from "lucide-react"
 import { Textarea } from "../ui/textarea"
 import {
@@ -61,6 +62,7 @@ import { toast } from "sonner"
 import { useTaskContext } from "../context/tasks"
 import {
   addCaptionToTask,
+  addImagePostDateToTask,
   addImageToTask,
   changeTaskAssignee,
   changeTaskColId,
@@ -71,7 +73,7 @@ import {
 } from "@/db/collections/task"
 import { createComment, getCommentsSnapshot } from "@/db/collections/comments"
 import { Checkbox } from "../ui/checkbox"
-import { COLUMNS, DEPARTMENTS } from "@/constants/enum"
+import { COLUMNS, DEPARTMENTS, USERS } from "@/constants/enum"
 import { DepsMultiPicker } from "../dropdown/deps-multi-picker"
 import { useRouter } from "next/router"
 import AvatarRow from "../avatars/AvatarRow"
@@ -83,6 +85,7 @@ import { UserCombobox } from "../combobox/user"
 import { formatDistanceToNow } from "date-fns"
 import { Timestamp } from "firebase/firestore"
 import Image from "next/image"
+import { Calendar } from "../ui/calendar"
 
 const defaultCols = [
   {
@@ -140,6 +143,12 @@ export function KanbanBoard({ cols = defaultCols }) {
           ? nameMatch && depsMatch && employeeMatch
           : nameMatch && employeeMatch
       }
+
+      const isUserEmployee = user?.role === USERS.EMPLOYEE
+
+      const isUserEmployeeMatch = isUserEmployee ? task.userId === userId : true
+
+      if (!isUserEmployeeMatch) return false
 
       return shouldMatchDeps ? nameMatch && depsMatch : nameMatch
     })
@@ -453,6 +462,8 @@ const TaskDialog = ({ task, show, setShow }) => {
 
   const [showCarouselIdx, setShowCarouselIdx] = useState(-1)
 
+  const [scheduleDialogImgIdx, setScheduleDialogImgIdx] = useState(-1)
+
   const userName = data.find((element) => element.uid === userId)
 
   const handleButtonClick = () => {
@@ -575,19 +586,40 @@ const TaskDialog = ({ task, show, setShow }) => {
               {task?.images && (
                 <>
                   <div className="mb-3 border-b pb-2">
-                    <h4 className="text-sm font-semibold mt-2">Images</h4>
+                    <h4 className="text-sm font-semibold my-2">Images</h4>
                     <div className="flex gap-1 cursor-pointer">
                       {task?.images.map((image) => (
-                        <Image
+                        <div
                           key={image}
-                          src={image}
-                          alt="task image"
-                          width={80}
-                          height={80}
-                          onClick={() => {
-                            setShowCarouselIdx(task?.images.indexOf(image))
-                          }}
-                        />
+                          className="flex flex-col items-center gap-1"
+                        >
+                          <Image
+                            key={image}
+                            src={image}
+                            alt="task image"
+                            width={80}
+                            height={80}
+                            onClick={() => {
+                              setShowCarouselIdx(task?.images.indexOf(image))
+                            }}
+                          />
+                          {task?.department === DEPARTMENTS.SCHEDULE && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setScheduleDialogImgIdx(
+                                  task?.images.indexOf(image)
+                                )
+                              }}
+                            >
+                              <Timer className="w-4 h-4" />
+                              {task?.imageToDates?.[image]
+                                ?.toDate()
+                                .toLocaleDateString()}
+                            </Button>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -955,6 +987,42 @@ const TaskDialog = ({ task, show, setShow }) => {
             <CarouselPrevious />
             <CarouselNext />
           </Carousel>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={scheduleDialogImgIdx !== -1}
+        onOpenChange={() => setScheduleDialogImgIdx(-1)}
+      >
+        <DialogContent className="flex justify-between">
+          <Calendar
+            mode="single"
+            onSelect={(date) => {
+              try {
+                toast("Image is being scheduled")
+                setScheduleDialogImgIdx(-1)
+                addImagePostDateToTask({
+                  id: task.id,
+                  date,
+                  image: task?.images?.[scheduleDialogImgIdx],
+                })
+                createNotification({
+                  subject: "Task Image Schedule Added",
+                  text: `An image has been scheduled to ${task.name} by ${user.email}`, //${userId}
+                  name: user.firstName || user.email,
+                  email: user.email,
+                  labels: ["Completed", "Schedule"],
+                  userId,
+                  projectId: currentProjectId,
+                  taskId: task.id,
+                })
+              } catch (error) {
+                console.error(error)
+                toast.error("Image schedule has an error")
+              }
+            }}
+            className="rounded-md border mx-auto"
+          />
         </DialogContent>
       </Dialog>
     </>
