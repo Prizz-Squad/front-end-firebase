@@ -173,9 +173,9 @@ export function ProjectsListRowActions({ row }) {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <DialogHeader>
-                <DialogTitle>Create Project</DialogTitle>
+                <DialogTitle>Update Project</DialogTitle>
                 <DialogDescription>
-                  Fill in the form below to create a new project.
+                  Fill in the form below to update the project.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
