@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog"
+} from "../ui/dialog";
 import {
   Form,
   FormControl,
@@ -15,61 +15,62 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription
-} from "../ui/form"
+  FormDescription,
+} from "../ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Input } from "../ui/input"
-import { Button } from "../ui/button"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { PlugIcon, Plus } from "lucide-react"
-import { z } from "zod"
-import { createTask } from "@/db/collections/task"
-import { userId } from "@/dummy-data/users"
-import { toast } from "sonner"
-import { SelectGroup } from "@radix-ui/react-select"
-import { COLUMNS, DEPARTMENTSENUM } from "@/constants/enum"
+} from "@/components/ui/select";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PlugIcon, Plus } from "lucide-react";
+import { z } from "zod";
+import { createTask } from "@/db/collections/task";
+import { userId } from "@/dummy-data/users";
+import { toast } from "sonner";
+import { SelectGroup } from "@radix-ui/react-select";
+import { COLUMNS, DEPARTMENTSENUM } from "@/constants/enum";
+import { Loader2 } from "lucide-react"
 
 const TaskSchema = z.object({
-  name: z.string(),
+  name: z.string().nonempty("Please write the name"),
   description: z.string(),
   columnId: z.string(),
-})
+});
 
 export default function KanbanHeader() {
+  const [isOpen, setIsOpen] = useState();
+  const [isLoading,setIsLoading] = useState()
 
   const defaultCols = [
     {
       title: "Design",
-      variable: DEPARTMENTSENUM.DESIGN
+      variable: DEPARTMENTSENUM.DESIGN,
     },
     {
       title: "Caption",
-      variable: DEPARTMENTSENUM.CAPTION
+      variable: DEPARTMENTSENUM.CAPTION,
     },
     {
       title: "Schedule",
-      variable: DEPARTMENTSENUM.SCHEDULE
+      variable: DEPARTMENTSENUM.SCHEDULE,
     },
-  ]
+  ];
 
-
-  const [priority,setPriority] = useState();
-  const [department,setDepartment] = useState();
-
+  const [priority, setPriority] = useState();
+  const [department, setDepartment] = useState();
 
   const onChangePriority = (value) => {
-    setPriority((value))
-  }
+    setPriority(value);
+  };
   const onChangeDepartment = (value) => {
-    setDepartment((value))
-  }
+    setDepartment(value);
+  };
 
   const form = useForm({
     resolver: zodResolver(TaskSchema),
@@ -77,26 +78,34 @@ export default function KanbanHeader() {
       name: "",
       description: "",
       columnId: COLUMNS.TODO,
-
     },
-  })
+  });
 
   const onSubmit = async (values) => {
+    setIsLoading(true)
     const validValues = {
       ...values,
       userId,
       priority: priority,
-      department: department 
+      department: department,
+    };
+    console.log(values, "values");
+    console.log(validValues, "validValues");
 
+    try {
+      await createTask(validValues);
+      toast("Task created.");
+      setIsLoading(false)
+      setIsOpen(false);
+      form.reset();
+    } catch (error) {
+      
+      toast.error(error.message);
     }
-    console.log(values,"values")
-    console.log(validValues,"validValues")
-
-    await createTask(validValues)
-    toast("Task created.")
-    form.reset()
-    
-  }
+    finally{
+      setIsLoading(false)
+    }
+  };
 
   return (
     <div className="flex justify-between m-2">
@@ -104,10 +113,11 @@ export default function KanbanHeader() {
         <h1 className="text-2xl font-bold">Tasks</h1>
       </div>
 
-      <Dialog>
-        <DialogTrigger asChild>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger onClick={() => setIsOpen(true)}>
           <Button variant="outline">
-            <Plus className="h-4" />
+             <Plus className="h-4" />
+
             Create Task
           </Button>
         </DialogTrigger>
@@ -156,51 +166,52 @@ export default function KanbanHeader() {
                     </FormItem>
                   )}
                 />
-              <div className="w-full items-center flex flex-row justify-between">
-               <p className=" font-semibold text-sm">Department</p>
-               <Select onValueChange={onChangeDepartment}>
-                <SelectTrigger className="w-3/4">
-                  <SelectValue placeholder="Design" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                   {
-                    defaultCols.map((dt,i)=> (
-                      <SelectItem value={dt.variable} key={i}>{dt.title}</SelectItem>
+                <div className="w-full items-center flex flex-row justify-between">
+                  <p className=" font-semibold text-sm">Department</p>
+                  <Select onValueChange={onChangeDepartment}>
+                    <SelectTrigger className="w-3/4">
+                      <SelectValue placeholder="Design" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {defaultCols.map((dt, i) => (
+                          <SelectItem value={dt.variable} key={i}>
+                            {dt.title}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                    ))
-                   }
-               
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-               </div>
-
-               <div className="w-full items-center flex flex-row justify-between">
-               <p className=" font-semibold text-sm">Piority</p>
-               <Select onValueChange={onChangePriority}>
-                <SelectTrigger className="w-3/4">
-                  <SelectValue placeholder="Medium" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="low">Low</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-               </div>
+                <div className="w-full items-center flex flex-row justify-between">
+                  <p className=" font-semibold text-sm">Piority</p>
+                  <Select onValueChange={onChangePriority}>
+                    <SelectTrigger className="w-3/4">
+                      <SelectValue placeholder="Medium" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="high">High</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="low">Low</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-             <div className="flex flex-row justify-end">
-             <DialogTrigger asChild>
-                <Button type="submit">Save changes</Button>
-              </DialogTrigger>
-             </div>
+              <DialogFooter asChild>
+                <Button type="submit" disabled={isLoading}>
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                
+                Save changes
+                
+              </Button>
+              </DialogFooter>
             </form>
           </Form>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

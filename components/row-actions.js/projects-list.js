@@ -32,7 +32,7 @@ export const taskSchema = z.object({
 
 import { labels } from "@/constants/list"
 import { DropdownMenuLabel } from "@radix-ui/react-dropdown-menu"
-import { MoreHorizontal } from "lucide-react"
+import { Loader2, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 import {
   Dialog,
@@ -58,12 +58,16 @@ import {
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ProjectSchema } from "@/pages/projects"
+import { useProjectContext } from "../context/project"
 
 export function ProjectsListRowActions({ row }) {
   const data = row.original
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const [showUpdateDialog, setShowUpdateDialog] = useState(false)
+  const [isLoading,setIsLoading] = useState()
+  const { triggerRefetch} = useProjectContext()
+
 
   const form = useForm({
     resolver: zodResolver(ProjectSchema),
@@ -75,9 +79,22 @@ export function ProjectsListRowActions({ row }) {
 
   const onSubmit = async (values) => {
     const { id } = data
-    await updateProject(id, values)
-    toast("Project updated.")
+   
+    try {
+      setIsLoading(true)
+      await updateProject(id, values)
+      toast("Project updated.")
     setShowUpdateDialog(false)
+    setIsLoading(false)
+    triggerRefetch()
+    } catch (error) {
+      toast.error("Project updated.")
+
+    }
+    finally{
+      setIsLoading(false)
+    }
+    
   }
 
   return (
@@ -130,14 +147,21 @@ export function ProjectsListRowActions({ row }) {
             <Button variant="ghost" onClick={() => setShowDeleteDialog(false)}>
               Cancel
             </Button>
-            <Button
+            <Button type="submit" disabled={isLoading}
               variant="destructive"
               onClick={async () => {
+                setIsLoading(true)
                 const { id } = data
                 await deleteProject(id)
+                form.reset()
+                triggerRefetch()
+                setShowDeleteDialog(false)
+                setIsLoading(false)
                 toast("Project deleted.")
+                 
               }}
             >
+                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Delete project
             </Button>
           </DialogFooter>
@@ -191,8 +215,12 @@ export function ProjectsListRowActions({ row }) {
                   )}
                 />
               </div>
-              <DialogFooter>
-                <Button type="submit">Save changes</Button>
+              <DialogFooter >
+              <Button type="submit" disabled={isLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Save changes
+                
+                </Button>
               </DialogFooter>
             </form>
           </Form>

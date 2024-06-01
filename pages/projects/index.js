@@ -37,42 +37,20 @@ import {
 } from "@/components/ui/form"
 import { createProject, getProjects } from "@/db/collections/project"
 import { useProjectContext } from "@/components/context/project"
-import { Plus } from "lucide-react"
+import { Loader2, Plus } from "lucide-react"
 
-async function getData() {
-  // Fetch data from your API here.
-  return [
-    {
-      id: "728ed52f",
-      name: "Project X",
-      description: "A project description.",
-      userName: "John Doe",
-      clientName: "ACME Inc.",
-    },
-    {
-      id: "728ed52g",
-      name: "Project Y",
-      description: "Another project description.",
-      userName: "Jane Doe",
-      clientName: "ACME Inc.",
-    },
-    {
-      id: "728ed52h",
-      name: "Project Z",
-      description: "Yet another project description.",
-      userName: "John Doe",
-      clientName: "ACME Inc.",
-    },
-  ]
-}
+
 export const ProjectSchema = z.object({
   name: z.string().nonempty("Name is required"),
   description: z.string().nonempty("Description is required"),
 })
 
 export default function DemoPage() {
+  const [isOpen, setIsOpen] = useState();
+  const [isLoading,setIsLoading] = useState()
+
   const [_data, setdata] = useState([])
-  const { data, addNewProject } = useProjectContext()
+  const { data, addNewProject ,triggerRefetch} = useProjectContext()
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
@@ -88,6 +66,7 @@ export default function DemoPage() {
   })
 
   const onSubmit = async (data) => {
+    setIsLoading(true)
     try {
       const validData = {
         ...data,
@@ -98,8 +77,14 @@ export default function DemoPage() {
       toast("Project created successfully")
       addNewProject(validData)
       form.reset()
+      triggerRefetch()
+      setIsLoading(false)
+      setIsOpen(false)
     } catch (error) {
       console.error(error)
+    }
+    finally{
+      setIsLoading(false)
     }
   }
   return (
@@ -109,8 +94,8 @@ export default function DemoPage() {
           <h1 className="text-2xl font-bold">Projects</h1>
         </div>
 
-        <Dialog>
-          <DialogTrigger asChild>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild onClick={() => setIsOpen(true)}>
           <Button variant="outline">
             <Plus className="h-4" />
             Create Project
@@ -183,9 +168,14 @@ export default function DemoPage() {
                 </Select>
               </div> */}
                 </div>
-                <DialogFooter>
-                  <Button type="submit">Save changes</Button>
-                </DialogFooter>
+                <DialogFooter asChild>
+                <Button type="submit" disabled={isLoading}>
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                
+                Save changes
+                
+              </Button>
+              </DialogFooter>
               </form>
             </Form>
           </DialogContent>
