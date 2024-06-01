@@ -73,6 +73,10 @@ export const changeTaskAssignee = async (id, assignee) => {
   await updateDoc(doc(coll, id), { assignee })
 }
 
+export const changeTaskDepartment = async (id, department) => {
+  await updateDoc(doc(coll, id), { department })
+}
+
 export const addCaptionToTask = async (id, caption) => {
   await updateDoc(doc(coll, id), { caption })
 }

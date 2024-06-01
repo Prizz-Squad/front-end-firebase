@@ -39,7 +39,14 @@ import {
   DialogTrigger,
 } from "../ui/dialog"
 import { Button } from "../ui/button"
-import { Bolt, Captions, Edit, Paperclip, PaperclipIcon } from "lucide-react"
+import {
+  ArrowRight,
+  Bolt,
+  Captions,
+  Edit,
+  Paperclip,
+  PaperclipIcon,
+} from "lucide-react"
 import { Textarea } from "../ui/textarea"
 import {
   Select,
@@ -57,13 +64,14 @@ import {
   addImageToTask,
   changeTaskAssignee,
   changeTaskColId,
+  changeTaskDepartment,
   changeTaskPriority,
   changeTaskStatus,
   toggleIsTaskCompleted,
 } from "@/db/collections/task"
 import { createComment, getCommentsSnapshot } from "@/db/collections/comments"
 import { Checkbox } from "../ui/checkbox"
-import { COLUMNS } from "@/constants/enum"
+import { COLUMNS, DEPARTMENTS } from "@/constants/enum"
 import { DepsMultiPicker } from "../dropdown/deps-multi-picker"
 import { useRouter } from "next/router"
 import AvatarRow from "../avatars/AvatarRow"
@@ -832,9 +840,42 @@ const TaskDialog = ({ task, show, setShow }) => {
                 <p>Updated 9 hours ago</p>
               </div>
 
-              <div className="flex cursor-pointer flex-row text-center justify-center items-center">
-                <Bolt className="w-5 h-5" />
-                <p className="text-sm ml-1 mb-1">Configure</p>
+              <div>
+                {task?.department !== DEPARTMENTS.DESIGN && (
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      const prevDepMap = {
+                        [DEPARTMENTS.CAPTION]: DEPARTMENTS.DESIGN,
+                        [DEPARTMENTS.SCHEDULE]: DEPARTMENTS.CAPTION,
+                      }
+                      const prevDep = prevDepMap[task.department]
+                      if (!prevDep) return
+                      changeTaskDepartment(task.id, prevDep)
+                      setShow(false)
+                    }}
+                  >
+                    Previous
+                  </Button>
+                )}
+                {task?.department !== DEPARTMENTS.SCHEDULE && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShow(false)
+                      const nextDepMap = {
+                        [DEPARTMENTS.DESIGN]: DEPARTMENTS.CAPTION,
+                        [DEPARTMENTS.CAPTION]: DEPARTMENTS.SCHEDULE,
+                      }
+                      const nextDep = nextDepMap[task.department]
+                      if (!nextDep) return
+                      changeTaskDepartment(task.id, nextDep)
+                    }}
+                  >
+                    Next department
+                    <ArrowRight className="w-5 h-5 ms-2" />
+                  </Button>
+                )}
               </div>
             </div>
           </div>
