@@ -31,11 +31,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { PlugIcon, Plus } from "lucide-react"
 import { z } from "zod"
 import { createTask } from "@/db/collections/task"
-import { userId } from "@/dummy-data/users"
 import { toast } from "sonner"
 import { SelectGroup } from "@radix-ui/react-select"
 import { COLUMNS, DEPARTMENTSENUM } from "@/constants/enum"
 import { Loader2 } from "lucide-react"
+import { useUserContext } from "../context/user"
 
 const TaskSchema = z.object({
   name: z.string().nonempty("Please write the name"),
@@ -44,6 +44,7 @@ const TaskSchema = z.object({
 })
 
 export default function KanbanHeader() {
+  const { userId } = useUserContext()
   const [isOpen, setIsOpen] = useState()
   const [isLoading, setIsLoading] = useState()
 
@@ -88,9 +89,7 @@ export default function KanbanHeader() {
       userId,
       priority: priority ? priority : "MEDIUM",
       department: department ? department : DEPARTMENTSENUM.DESIGN,
-    };
-    console.log(values, "values");
-    console.log(validValues, "validValues");
+    }
 
     try {
       await createTask(validValues)
@@ -165,7 +164,10 @@ export default function KanbanHeader() {
                 />
                 <div className="w-full items-center flex flex-row justify-between">
                   <p className=" font-semibold text-sm">Department</p>
-                  <Select onValueChange={onChangeDepartment} defaultValue="DESIGN">
+                  <Select
+                    onValueChange={onChangeDepartment}
+                    defaultValue="DESIGN"
+                  >
                     <SelectTrigger className="w-3/4">
                       <SelectValue placeholder="Design" />
                     </SelectTrigger>
@@ -185,7 +187,10 @@ export default function KanbanHeader() {
                   <p className=" font-semibold text-sm">Piority</p>
                   <Select onValueChange={onChangePriority}>
                     <SelectTrigger className="w-3/4">
-                      <SelectValue placeholder="Medium" defaultValue={DEPARTMENTSENUM.DESIGN}/>
+                      <SelectValue
+                        placeholder="Medium"
+                        defaultValue={DEPARTMENTSENUM.DESIGN}
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
