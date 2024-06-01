@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/tooltip"
 import { Avatar, AvatarImage } from "../ui/avatar"
 
-export function Sidebar({ links, isCollapsed, isMobile }) {
+export function Sidebar({ links, isCollapsed, isMobile, onClick }) {
   return (
     <div
       data-collapsed={isCollapsed}
@@ -62,6 +62,7 @@ export function Sidebar({ links, isCollapsed, isMobile }) {
                       link.variant === "grey" &&
                         "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
                     )}
+                    onClick={() => onClick(link)}
                   >
                     <Avatar className="flex justify-center items-center">
                       <AvatarImage
@@ -93,6 +94,7 @@ export function Sidebar({ links, isCollapsed, isMobile }) {
                   "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white shrink",
                 "justify-start gap-4"
               )}
+              onClick={() => onClick(link)}
             >
               <Avatar className="flex justify-center items-center">
                 <AvatarImage

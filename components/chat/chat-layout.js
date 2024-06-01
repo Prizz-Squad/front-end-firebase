@@ -8,6 +8,8 @@ import {
 import { cn } from "@/lib/utils"
 import { Sidebar } from "./sidebar"
 import { Chat } from "./chat"
+import { useUserContext } from "../context/user"
+import { getMessagesSnapshot } from "@/db/collections/messages"
 
 export function ChatLayout({
   defaultLayout = [320, 480],
@@ -17,6 +19,8 @@ export function ChatLayout({
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
   const [selectedUser, setSelectedUser] = React.useState(userData[0])
   const [isMobile, setIsMobile] = useState(false)
+  const { data, userId } = useUserContext()
+  const [messages, setMessages] = React.useState([])
 
   useEffect(() => {
     const checkScreenWidth = () => {
@@ -34,6 +38,29 @@ export function ChatLayout({
       window.removeEventListener("resize", checkScreenWidth)
     }
   }, [])
+
+  useEffect(() => {
+    if (!userId) return
+    getMessagesSnapshot(
+      (messages) => {
+        console.log("messages", messages)
+        setMessages(messages)
+      },
+      {
+        userId,
+      }
+    )
+  }, [userId])
+
+  useEffect(() => {
+    // select the first user by default
+    const user = data[0]
+    setSelectedUser({
+      ...user,
+      messages: user?.messages ?? [],
+      name: user?.firstName,
+    })
+  }, [data])
 
   return (
     <ResizablePanelGroup
@@ -70,19 +97,32 @@ export function ChatLayout({
       >
         <Sidebar
           isCollapsed={isCollapsed || isMobile}
-          links={userData.map((user) => ({
-            name: user.name,
-            messages: user.messages ?? [],
+          links={data.map((user) => ({
+            ...user,
+            name: user.firstName,
+            messages: messages.map((message) => ({
+              ...message,
+              name: user.firstName,
+              avatar: user.avatar,
+            })),
             avatar: user.avatar,
             variant: selectedUser.name === user.name ? "grey" : "ghost",
           }))}
           isMobile={isMobile}
+          onClick={(user) => {
+            setSelectedUser(user)
+          }}
         />
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
         <Chat
-          messages={selectedUser.messages}
+          // messages={selectedUser.messages}
+          messages={messages.map((message) => ({
+            ...message,
+            name: selectedUser.name,
+            avatar: selectedUser.avatar,
+          }))}
           selectedUser={selectedUser}
           isMobile={isMobile}
         />
