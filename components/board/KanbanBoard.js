@@ -55,6 +55,7 @@ import { DepsMultiPicker } from "../dropdown/deps-multi-picker"
 import { useRouter } from "next/router"
 import AvatarRow from "../avatars/AvatarRow"
 import { uploadFileToBucket } from "@/db/storage/task-images"
+import { useUserContext } from "../context/user"
 
 const defaultCols = [
   {
@@ -71,6 +72,11 @@ const defaultCols = [
   },
 ]
 export function KanbanBoard({ cols = defaultCols }) {
+
+  //user data
+  const { data,  } = useUserContext()
+  console.log(data,"userdata")
+
   const router = useRouter()
   const { snapshotData: tasks, setSnapshotData: setTasks } = useTaskContext()
   const [columns, setColumns] = useState(cols)
@@ -92,12 +98,10 @@ export function KanbanBoard({ cols = defaultCols }) {
   const [selectedEmployee, setSelectedEmployee] = useState([])
 
   const filteredTasks = useMemo(() => {
-    console.log("filteredTasks", tasks)
-
     const shouldMatchDeps = urlsDepsArray.length > 0
     return tasks.filter((task) => {
       const nameMatch = task.name
-        .toLowerCase()
+        ?.toLowerCase()
         .includes(globalFilter.toLowerCase())
       const depsMatch = urlsDepsArray.includes(task.department)
       return shouldMatchDeps ? nameMatch && depsMatch : nameMatch
@@ -218,6 +222,7 @@ export function KanbanBoard({ cols = defaultCols }) {
     },
   }
 
+  
   return (
     <>
       <div className="flex items-center gap-4">
@@ -230,6 +235,7 @@ export function KanbanBoard({ cols = defaultCols }) {
         <AvatarRow
           setSelectedEmployee={setSelectedEmployee}
           selectedEmployee={selectedEmployee}
+          data={data}
         />
         <DepsMultiPicker />
       </div>
