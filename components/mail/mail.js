@@ -81,14 +81,7 @@ export function Mail({
               "min-w-[50px] transition-all duration-300 ease-in-out"
           )}
         >
-          <div
-            className={cn(
-              "flex h-[52px] items-center justify-center",
-              isCollapsed ? "h-[52px]" : "px-2"
-            )}
-          >
-            <AccountSwitcher isCollapsed={isCollapsed} accounts={accounts} />
-          </div>
+         
           <Separator />
           <Nav
             isCollapsed={isCollapsed}
@@ -98,18 +91,6 @@ export function Mail({
                 label: "128",
                 icon: Inbox,
                 variant: "default",
-              },
-              {
-                title: "Drafts",
-                label: "9",
-                icon: File,
-                variant: "ghost",
-              },
-              {
-                title: "Sent",
-                label: "",
-                icon: Send,
-                variant: "ghost",
               },
               {
                 title: "Junk",
@@ -135,30 +116,15 @@ export function Mail({
           <Nav
             isCollapsed={isCollapsed}
             links={[
-              {
-                title: "Social",
-                label: "972",
-                icon: Users2,
-                variant: "ghost",
-              },
+             
               {
                 title: "Updates",
                 label: "342",
                 icon: AlertCircle,
                 variant: "ghost",
               },
-              {
-                title: "Forums",
-                label: "128",
-                icon: MessagesSquare,
-                variant: "ghost",
-              },
-              {
-                title: "Shopping",
-                label: "8",
-                icon: ShoppingCart,
-                variant: "ghost",
-              },
+            
+            
               {
                 title: "Promotions",
                 label: "21",
