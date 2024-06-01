@@ -18,11 +18,7 @@ export const createUser = async (values) => {
 
 export const getUsers = async () => {
   const querySnapshot = await getDocs(coll)
-  const data = querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }))
-  console.log("data", data)
+  const data = querySnapshot.docs.map((doc) => doc.data())
   return data
 }
 
@@ -31,5 +27,5 @@ export const deleteUser = async (id) => {
 }
 
 export const updateUserStatus = async (id, role) => {
-  await updateDoc(doc(coll, id), {role})
+  await updateDoc(doc(coll, id), { role })
 }
