@@ -125,6 +125,7 @@ export function KanbanBoard({ cols = defaultCols }) {
     })
   }, [tasks, urlsDepsArray, globalFilter])
 
+  
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
@@ -671,7 +672,7 @@ const TaskDialog = ({ task, show, setShow }) => {
               <div className="flex gap-2">
                 <Select onValueChange={(columnId) =>  onSubmitUpdateStatus(columnId)}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="In Progress" />
+                    <SelectValue placeholder={task.columnId} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>

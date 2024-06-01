@@ -9,13 +9,13 @@ const AvatarRow = ({ setSelectedEmployee, selectedEmployee, data }) => {
             key={i}
             onClick={() =>
               setSelectedEmployee((previous) =>
-                previous.includes(dt.id)
-                  ? previous.filter((id) => id !== dt.id)
-                  : [...previous, dt.id]
+                previous.includes(dt.uid)
+                  ? previous.filter((uid) => uid !== dt.uid)
+                  : [...previous, dt.uid]
               )
             }
             className={`ring-white ring-2 cursor-pointer hover:-translate-y-2 transition-transform duration-150 ease-in-out ${
-              selectedEmployee.includes(dt.id) ? "ring-blue-400" : ""
+              selectedEmployee.includes(dt.uid) ? "ring-blue-400" : ""
             }`}
             style={{ margin: "-5px" }}
           >

@@ -77,6 +77,7 @@ import { useRouter } from "next/router"
 import React from "react"
 import { ModeToggle } from "../toggles/dark-light-mode"
 import { ProjectCombobox } from "../combobox/project"
+import { useUserContext } from "../context/user"
 
 export default function Sidebar() {
   const components = [
@@ -111,6 +112,10 @@ export default function Sidebar() {
     },
     // Add more component objects as needed
   ]
+
+
+  const {user} = useUserContext()
+
 
   const ListItem = React.forwardRef(function ListItem(
     { className, title, children, ...props },
@@ -374,7 +379,7 @@ export default function Sidebar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
