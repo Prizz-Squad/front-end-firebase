@@ -50,9 +50,9 @@ export const columns = [
     },
   },
   {
-    accessorKey: "userName",
+    accessorKey: "userId",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Created by" />
+      return <DataTableColumnHeader column={column} title="User Id" />
     },
   },
   {

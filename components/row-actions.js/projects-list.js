@@ -46,6 +46,18 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { Label } from "../ui/label"
 import { Input } from "../ui/input"
+import { deleteProject, updateProject } from "@/db/collections/project"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { ProjectSchema } from "@/pages/projects"
 
 export function ProjectsListRowActions({ row }) {
   const data = row.original
@@ -53,11 +65,19 @@ export function ProjectsListRowActions({ row }) {
 
   const [showUpdateDialog, setShowUpdateDialog] = useState(false)
 
-  const [name, setName] = useState(data.name)
-  const [description, setDescription] = useState(data.description)
+  const form = useForm({
+    resolver: zodResolver(ProjectSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+    },
+  })
 
-  const handleUpdate = () => {
-    console.log("Save project")
+  const onSubmit = async (values) => {
+    const { id } = data
+    await updateProject(id, values)
+    toast("Project updated.")
+    setShowUpdateDialog(false)
   }
 
   return (
@@ -85,6 +105,8 @@ export function ProjectsListRowActions({ row }) {
             onClick={() => {
               //TODO: set state to show update dialog
               setShowUpdateDialog(true)
+              form.setValue("name", data.name)
+              form.setValue("description", data.description)
             }}
           >
             Project settings
@@ -110,10 +132,9 @@ export function ProjectsListRowActions({ row }) {
             </Button>
             <Button
               variant="destructive"
-              onClick={() => {
-                // TODO: Delete the project here.
-
-                // setShowDeleteDialog(false)
+              onClick={async () => {
+                const { id } = data
+                await deleteProject(id)
                 toast("Project deleted.")
               }}
             >
@@ -125,43 +146,56 @@ export function ProjectsListRowActions({ row }) {
 
       <Dialog open={showUpdateDialog} onOpenChange={setShowUpdateDialog}>
         <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Update Project</DialogTitle>
-            <DialogDescription>
-              Fill in the form below to create a new project.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Project X"
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Description
-              </Label>
-              <Input
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Marketing campaign"
-                className="col-span-3"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit" onClick={handleUpdate}>
-              Update project
-            </Button>
-          </DialogFooter>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <DialogHeader>
+                <DialogTitle>Create Project</DialogTitle>
+                <DialogDescription>
+                  Fill in the form below to create a new project.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="grid grid-cols-4 items-center gap-4">
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Project X"
+                          className="col-span-3"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="col-span-4" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem className="grid grid-cols-4 items-center gap-4">
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Marketing campaign"
+                          className="col-span-3"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="col-span-4" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <DialogFooter>
+                <Button type="submit">Save changes</Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </>

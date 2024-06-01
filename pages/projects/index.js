@@ -24,6 +24,19 @@ import {
 import { useEffect, useState } from "react"
 import { userId } from "@/dummy-data/users"
 import { toast } from "sonner"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { createProject, getProjects } from "@/db/collections/project"
+import { useProjectContext } from "@/components/context/project"
 
 async function getData() {
   // Fetch data from your API here.
@@ -51,36 +64,39 @@ async function getData() {
     },
   ]
 }
+export const ProjectSchema = z.object({
+  name: z.string().nonempty("Name is required"),
+  description: z.string().nonempty("Description is required"),
+})
 
 export default function DemoPage() {
-  const [data, setdata] = useState([])
+  const [_data, setdata] = useState([])
+  const { data, addNewProject } = useProjectContext()
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  useEffect(() => {
-    getData().then((data) => {
-      setdata(data)
-    })
-  }, [])
+  const form = useForm({
+    resolver: zodResolver(ProjectSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+    },
+  })
 
-  const handleSave = () => {
-    console.log("Form submitted")
+  const onSubmit = async (data) => {
     try {
-      const newProject = {
-        name,
-        description,
+      const validData = {
+        ...data,
         userId,
       }
-      console.log(newProject)
-
-      // TODO: Save the new project to the database.
-
-      setName("")
-      setDescription("")
+      console.log("validData", validData)
+      await createProject(validData)
       toast("Project created successfully")
+      addNewProject(validData)
+      form.reset()
     } catch (error) {
       console.error(error)
     }
@@ -97,38 +113,51 @@ export default function DemoPage() {
             <Button variant="outline">Create Project</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Create Project</DialogTitle>
-              <DialogDescription>
-                Fill in the form below to create a new project.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Name
-                </Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Project X"
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="description" className="text-right">
-                  Description
-                </Label>
-                <Input
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Marketing campaign"
-                  className="col-span-3"
-                />
-              </div>
-              {/* <div className="grid grid-cols-4 items-center gap-4">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <DialogHeader>
+                  <DialogTitle>Create Project</DialogTitle>
+                  <DialogDescription>
+                    Fill in the form below to create a new project.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem className="grid grid-cols-4 items-center gap-4">
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Project X"
+                            className="col-span-3"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="col-span-4" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem className="grid grid-cols-4 items-center gap-4">
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Marketing campaign"
+                            className="col-span-3"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="col-span-4" />
+                      </FormItem>
+                    )}
+                  />
+                  {/* <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="description" className="text-right">
                   Client
                 </Label>
@@ -148,12 +177,12 @@ export default function DemoPage() {
                   </SelectContent>
                 </Select>
               </div> */}
-            </div>
-            <DialogFooter>
-              <Button type="submit" onClick={handleSave}>
-                Save changes
-              </Button>
-            </DialogFooter>
+                </div>
+                <DialogFooter>
+                  <Button type="submit">Save changes</Button>
+                </DialogFooter>
+              </form>
+            </Form>
           </DialogContent>
         </Dialog>
       </div>
