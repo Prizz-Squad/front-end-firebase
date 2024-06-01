@@ -5,8 +5,10 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore"
 
 const coll = collection(db, "users")
@@ -26,6 +28,11 @@ export const deleteUser = async (id) => {
   await deleteDoc(doc(coll, id))
 }
 
-export const updateUserStatus = async (id, role) => {
-  await updateDoc(doc(coll, id), { role })
+export const updateUserStatus = async (uid, role) => {
+  const qry = query(coll,where("uid","==",uid))
+  const querySnapshot = await getDocs(qry)
+  querySnapshot.forEach((doc)=> {
+    updateDoc(doc.ref,{role})
+  })
+
 }

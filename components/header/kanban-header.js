@@ -33,10 +33,11 @@ import { z } from "zod"
 import { createTask } from "@/db/collections/task"
 import { toast } from "sonner"
 import { SelectGroup } from "@radix-ui/react-select"
-import { COLUMNS, DEPARTMENTSENUM } from "@/constants/enum"
+import { COLUMNS, DEPARTMENTSENUM, USERS } from "@/constants/enum"
 import { Loader2 } from "lucide-react"
 import { useUserContext } from "../context/user"
 import { UserCombobox } from "../combobox/user"
+import Wrapper from "../wrapper/wrapper"
 
 const TaskSchema = z.object({
   name: z.string().nonempty("Please write the name"),
@@ -116,12 +117,14 @@ export default function KanbanHeader() {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Wrapper requiredRight={[USERS.ADMIN,USERS.MANAGER]}>
         <DialogTrigger asChild onClick={() => setIsOpen(true)}>
           <Button variant="outline">
             <Plus className="h-4" />
             Create Task
           </Button>
         </DialogTrigger>
+        </Wrapper>
         <DialogContent className="sm:max-w-[425px]">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

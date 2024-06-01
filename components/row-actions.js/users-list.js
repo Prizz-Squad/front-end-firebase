@@ -83,11 +83,11 @@ export function UsersListRowActions({ row }) {
 
 
   const onSubmit = async (values) => {
-    const { id } = data
+    const { uid } = data
 
     try {
       setIsLoading(true)
-      await updateUserStatus(id, role)
+      await updateUserStatus(uid, role)
       toast("Project updated.")
       setShowUpdateDialog(false)
       setIsLoading(false)
@@ -99,6 +99,8 @@ export function UsersListRowActions({ row }) {
       setIsLoading(false)
     }
   }
+
+  console.log(role,"role")
 
   return (
     <>
@@ -182,7 +184,6 @@ export function UsersListRowActions({ row }) {
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
-              
 
               <Select  className='w-full' onValueChange={setRole}>
               <SelectTrigger className="w-full">
