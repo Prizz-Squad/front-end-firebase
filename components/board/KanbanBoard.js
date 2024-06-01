@@ -59,8 +59,8 @@ import { useRouter } from "next/router"
 import AvatarRow from "../avatars/AvatarRow"
 import { uploadFileToBucket } from "@/db/storage/task-images"
 import { createNotification } from "@/db/collections/notification"
-import { useUserContext } from "../context/user"
 import { useProjectContext } from "../context/project"
+import { useUserContext } from "../context/user"
 
 const defaultCols = [
   {
@@ -77,6 +77,10 @@ const defaultCols = [
   },
 ]
 export function KanbanBoard({ cols = defaultCols }) {
+  //user data
+  const { data } = useUserContext()
+  console.log(data, "userdata")
+
   const router = useRouter()
   const { userId, user } = useUserContext()
   const { currentProjectId } = useProjectContext()
@@ -236,6 +240,7 @@ export function KanbanBoard({ cols = defaultCols }) {
         <AvatarRow
           setSelectedEmployee={setSelectedEmployee}
           selectedEmployee={selectedEmployee}
+          data={data}
         />
         <DepsMultiPicker />
       </div>
