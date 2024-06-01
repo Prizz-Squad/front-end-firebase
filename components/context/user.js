@@ -30,7 +30,7 @@ export const UserCtxProvider = ({ children }) => {
         router.push("/dashboard")
       }
     })
-  }, []) 
+  }, [])
 
   useEffect(() => {
     if (!user) return
@@ -38,15 +38,24 @@ export const UserCtxProvider = ({ children }) => {
       console.log("users", users)
       setData(users)
     })
-  }, [user,refetch])
+  }, [user, refetch])
 
   const addNewUser = (newUser) => {
     setData((prev) => [newUser, ...prev])
   }
 
+  const dbUser = data.find((element) => element.uid === user?.uid)
+
   return (
     <UserCtx.Provider
-      value={{ user, userId: user?.uid, data, addNewUser, triggerRefetch }}
+      value={{
+        user,
+        userId: user?.uid,
+        data,
+        addNewUser,
+        dbUser,
+        triggerRefetch,
+      }}
     >
       {children}
     </UserCtx.Provider>

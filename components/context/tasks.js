@@ -1,10 +1,12 @@
 import { getTasks, getTasksSnapshot } from "@/db/collections/task"
+import { useProjectContext } from "./project"
 
 const { createContext, useContext, useState, useEffect } = require("react")
 
 const TaskCtx = createContext()
 
 export const TaskCtxProvider = ({ children }) => {
+  const { currentProjectId } = useProjectContext()
   const [data, setData] = useState([])
   const [refetch, setRefetch] = useState(false)
 
@@ -15,14 +17,18 @@ export const TaskCtxProvider = ({ children }) => {
   }
 
   useEffect(() => {
+    // TODO:we are fetching 2 times
     getTasks().then((data) => {
       setData(data)
     })
   }, [refetch])
-  useEffect(() => {
-    getTasksSnapshot(setSnapshotData)
-  }, [])
 
+  useEffect(() => {
+    if (!currentProjectId) return
+    getTasksSnapshot(setSnapshotData, { projectId: currentProjectId })
+  }, [currentProjectId])
+
+  // TODO: wtf does project have to do here
   const addNewProject = (newProject) => {
     setData((prev) => [newProject, ...prev])
   }

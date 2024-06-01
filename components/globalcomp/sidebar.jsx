@@ -121,8 +121,6 @@ export default function Sidebar() {
 
   const username = data.find((element) => element.uid === userId)
 
-  console.log(username,"user")
-
   const ListItem = React.forwardRef(function ListItem(
     { className, title, children, ...props },
     ref
@@ -190,23 +188,23 @@ export default function Sidebar() {
             </TooltipTrigger>
             <TooltipContent side="right">Projects</TooltipContent>
           </Tooltip>
-          <Wrapper requiredRight={[USERS.ADMIN,USERS.MANAGER]}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="/users"
-                className={`${
-                  router.pathname && router.pathname === "/users"
-                    ? " dark:text-black text-accent-foreground bg-gray-100"
-                    : " text-muted-foreground"
-                } flex h-9 w-9  items-center justify-center rounded-lg  transition-colors hover:text-foreground md:h-8 md:w-8`}
-              >
-                <UserRound className="h-5 w-5" />
-                <span className="sr-only">Users</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Users</TooltipContent>
-          </Tooltip>
+          <Wrapper requiredRight={[USERS.ADMIN, USERS.MANAGER]}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="/users"
+                  className={`${
+                    router.pathname && router.pathname === "/users"
+                      ? " dark:text-black text-accent-foreground bg-gray-100"
+                      : " text-muted-foreground"
+                  } flex h-9 w-9  items-center justify-center rounded-lg  transition-colors hover:text-foreground md:h-8 md:w-8`}
+                >
+                  <UserRound className="h-5 w-5" />
+                  <span className="sr-only">Users</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">Users</TooltipContent>
+            </Tooltip>
           </Wrapper>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -378,7 +376,6 @@ export default function Sidebar() {
               className="overflow-hidden rounded-full hover:ring-1 hover:ring-black"
             >
               <Avatar>
-                {console.log(username, "useranem")}
                 <AvatarFallback className=" ring-2 ring-black p-4">
                   {username?.firstName?.charAt(0).toUpperCase()}
                 </AvatarFallback>

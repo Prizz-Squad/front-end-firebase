@@ -107,7 +107,7 @@ export function KanbanBoard({ cols = defaultCols }) {
   const { data } = useUserContext()
 
   const router = useRouter()
-  const { userId, user } = useUserContext()
+  const { userId, user, dbUser } = useUserContext()
   const { currentProjectId } = useProjectContext()
   const { snapshotData: tasks, setSnapshotData: setTasks } = useTaskContext()
   const [columns, setColumns] = useState(cols)
@@ -145,15 +145,17 @@ export function KanbanBoard({ cols = defaultCols }) {
           : nameMatch && employeeMatch
       }
 
-      const isUserEmployee = user?.role === USERS.EMPLOYEE
+      const isUserEmployee = dbUser?.role === USERS.EMPLOYEE
 
-      const isUserEmployeeMatch = isUserEmployee ? task.userId === userId : true
+      const isUserEmployeeMatch = isUserEmployee
+        ? task.assignee === userId
+        : true
 
       if (!isUserEmployeeMatch) return false
 
       return shouldMatchDeps ? nameMatch && depsMatch : nameMatch
     })
-  }, [tasks, urlsDepsArray, globalFilter])
+  }, [tasks, urlsDepsArray, dbUser, globalFilter])
 
   useEffect(() => {
     // update the task in dialog if it's open, when the task is updated
@@ -287,13 +289,13 @@ export function KanbanBoard({ cols = defaultCols }) {
           onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm my-4"
         />
-      <Wrapper requiredRight={[USERS.ADMIN,USERS.MANAGER]}>
-      <AvatarRow
-          setSelectedEmployee={setSelectedEmployee}
-          selectedEmployee={selectedEmployee}
-          data={data}
-        />
-      </Wrapper>
+        <Wrapper requiredRight={[USERS.ADMIN, USERS.MANAGER]}>
+          <AvatarRow
+            setSelectedEmployee={setSelectedEmployee}
+            selectedEmployee={selectedEmployee}
+            data={data}
+          />
+        </Wrapper>
         <DepsMultiPicker />
       </div>
       <DndContext

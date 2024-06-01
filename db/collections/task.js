@@ -7,8 +7,10 @@ import {
   getDoc,
   getDocs,
   onSnapshot,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore"
 
 const coll = collection(db, "tasks")
@@ -58,8 +60,9 @@ export const toggleIsTaskCompleted = async (id, isCompleted) => {
   await updateDoc(doc(coll, id), { isCompleted })
 }
 
-export const getTasksSnapshot = async (callback) => {
-  onSnapshot(coll, (snapshot) => {
+export const getTasksSnapshot = async (callback, { projectId }) => {
+  const qry = query(coll, where("projectId", "==", projectId))
+  onSnapshot(qry, (snapshot) => {
     const data = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),

@@ -38,6 +38,7 @@ import { Loader2 } from "lucide-react"
 import { useUserContext } from "../context/user"
 import { UserCombobox } from "../combobox/user"
 import Wrapper from "../wrapper/wrapper"
+import { useProjectContext } from "../context/project"
 
 const TaskSchema = z.object({
   name: z.string().nonempty("Please write the name"),
@@ -47,10 +48,10 @@ const TaskSchema = z.object({
 
 export default function KanbanHeader() {
   const { userId } = useUserContext()
+  const { currentProjectId } = useProjectContext()
   const [isOpen, setIsOpen] = useState()
   const [isLoading, setIsLoading] = useState()
-  const [assigne,setAssigne] = useState()
-
+  const [assigne, setAssigne] = useState()
 
   const defaultCols = [
     {
@@ -83,7 +84,7 @@ export default function KanbanHeader() {
       name: "",
       description: "",
       columnId: COLUMNS.TODO,
-      assignee: ""
+      assignee: "",
     },
   })
 
@@ -94,7 +95,8 @@ export default function KanbanHeader() {
       userId,
       priority: priority ? priority : "MEDIUM",
       department: department ? department : DEPARTMENTSENUM.DESIGN,
-      assignee: assigne
+      assignee: assigne,
+      projectId: currentProjectId,
     }
 
     try {
@@ -117,13 +119,13 @@ export default function KanbanHeader() {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <Wrapper requiredRight={[USERS.ADMIN,USERS.MANAGER]}>
-        <DialogTrigger asChild onClick={() => setIsOpen(true)}>
-          <Button variant="outline">
-            <Plus className="h-4" />
-            Create Task
-          </Button>
-        </DialogTrigger>
+        <Wrapper requiredRight={[USERS.ADMIN, USERS.MANAGER]}>
+          <DialogTrigger asChild onClick={() => setIsOpen(true)}>
+            <Button variant="outline">
+              <Plus className="h-4" />
+              Create Task
+            </Button>
+          </DialogTrigger>
         </Wrapper>
         <DialogContent className="sm:max-w-[425px]">
           <Form {...form}>
@@ -210,17 +212,14 @@ export default function KanbanHeader() {
                   </Select>
                 </div>
                 <div className="w-full items-center flex flex-row justify-between">
-                
-                <p className=" font-semibold text-sm">Assigne</p>
-                <UserCombobox
-                  onSelect={(newUserId) => {
-                    setAssigne(newUserId)
-                   
-                  }}
-                  onlyEmployee
-                />
-                
-              </div>
+                  <p className=" font-semibold text-sm">Assigne</p>
+                  <UserCombobox
+                    onSelect={(newUserId) => {
+                      setAssigne(newUserId)
+                    }}
+                    onlyEmployee
+                  />
+                </div>
               </div>
               <DialogFooter asChild>
                 <Button type="submit" disabled={isLoading}>
