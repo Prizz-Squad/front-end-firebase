@@ -25,14 +25,10 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { AccountSwitcher } from "@/components/mail/account-switcher"
 import { MailDisplay } from "@/components/mail/mail-display"
 import { MailList } from "@/components/mail/mail-list"
 import { Nav } from "@/components/mail/nav"
 import { useMail } from "@/components/mail/use-mail"
-import { useProjectContext } from "../context/project"
-import { useNotificationContext } from "../context/notifications"
-import { Timestamp } from "firebase/firestore"
 
 export function Mail({
   accounts,
@@ -41,17 +37,8 @@ export function Mail({
   defaultCollapsed = false,
   navCollapsedSize,
 }) {
-  console.log("Mail", mails)
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
   const [mail] = useMail()
-
-  const { data } = useNotificationContext()
-  console.log("data", data)
-
-  const mappedMails = data.map((item) => ({
-    ...item,
-    date: item?.createdAt?.toDate() || Timestamp.now().toDate(),
-  }))
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -81,7 +68,6 @@ export function Mail({
               "min-w-[50px] transition-all duration-300 ease-in-out"
           )}
         >
-         
           <Separator />
           <Nav
             isCollapsed={isCollapsed}
@@ -116,15 +102,13 @@ export function Mail({
           <Nav
             isCollapsed={isCollapsed}
             links={[
-             
               {
                 title: "Updates",
                 label: "342",
                 icon: AlertCircle,
                 variant: "ghost",
               },
-            
-            
+
               {
                 title: "Promotions",
                 label: "21",
@@ -164,17 +148,17 @@ export function Mail({
               </form>
             </div>
             <TabsContent value="all" className="m-0">
-              <MailList items={mappedMails} />
+              <MailList items={mails} />
             </TabsContent>
             <TabsContent value="unread" className="m-0">
-              <MailList items={mappedMails.filter((item) => !item.read)} />
+              <MailList items={mails.filter((item) => !item.read)} />
             </TabsContent>
           </Tabs>
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[2]}>
           <MailDisplay
-            mail={mappedMails.find((item) => item.id === mail.selected) || null}
+            mail={mails.find((item) => item.id === mail.selected) || null}
           />
         </ResizablePanel>
       </ResizablePanelGroup>

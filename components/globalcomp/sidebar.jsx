@@ -113,9 +113,7 @@ export default function Sidebar() {
     // Add more component objects as needed
   ]
 
-
-  const {user} = useUserContext()
-
+  const { user } = useUserContext()
 
   const ListItem = React.forwardRef(function ListItem(
     { className, title, children, ...props },
@@ -379,7 +377,7 @@ export default function Sidebar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+            <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
