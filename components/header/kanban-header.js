@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
+} from "../ui/dialog"
 import {
   Form,
   FormControl,
@@ -16,36 +16,36 @@ import {
   FormLabel,
   FormMessage,
   FormDescription,
-} from "../ui/form";
+} from "../ui/form"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { PlugIcon, Plus } from "lucide-react";
-import { z } from "zod";
-import { createTask } from "@/db/collections/task";
-import { userId } from "@/dummy-data/users";
-import { toast } from "sonner";
-import { SelectGroup } from "@radix-ui/react-select";
-import { COLUMNS, DEPARTMENTSENUM } from "@/constants/enum";
+} from "@/components/ui/select"
+import { Input } from "../ui/input"
+import { Button } from "../ui/button"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { PlugIcon, Plus } from "lucide-react"
+import { z } from "zod"
+import { createTask } from "@/db/collections/task"
+import { userId } from "@/dummy-data/users"
+import { toast } from "sonner"
+import { SelectGroup } from "@radix-ui/react-select"
+import { COLUMNS, DEPARTMENTSENUM } from "@/constants/enum"
 import { Loader2 } from "lucide-react"
 
 const TaskSchema = z.object({
   name: z.string().nonempty("Please write the name"),
   description: z.string(),
   columnId: z.string(),
-});
+})
 
 export default function KanbanHeader() {
-  const [isOpen, setIsOpen] = useState();
-  const [isLoading,setIsLoading] = useState()
+  const [isOpen, setIsOpen] = useState()
+  const [isLoading, setIsLoading] = useState()
 
   const defaultCols = [
     {
@@ -60,17 +60,17 @@ export default function KanbanHeader() {
       title: "Schedule",
       variable: DEPARTMENTSENUM.SCHEDULE,
     },
-  ];
+  ]
 
-  const [priority, setPriority] = useState();
-  const [department, setDepartment] = useState();
+  const [priority, setPriority] = useState()
+  const [department, setDepartment] = useState()
 
   const onChangePriority = (value) => {
-    setPriority(value);
-  };
+    setPriority(value)
+  }
   const onChangeDepartment = (value) => {
-    setDepartment(value);
-  };
+    setDepartment(value)
+  }
 
   const form = useForm({
     resolver: zodResolver(TaskSchema),
@@ -79,7 +79,7 @@ export default function KanbanHeader() {
       description: "",
       columnId: COLUMNS.TODO,
     },
-  });
+  })
 
   const onSubmit = async (values) => {
     setIsLoading(true)
@@ -88,24 +88,22 @@ export default function KanbanHeader() {
       userId,
       priority: priority,
       department: department,
-    };
-    console.log(values, "values");
-    console.log(validValues, "validValues");
+    }
+    console.log(values, "values")
+    console.log(validValues, "validValues")
 
     try {
-      await createTask(validValues);
-      toast("Task created.");
+      await createTask(validValues)
+      toast("Task created.")
       setIsLoading(false)
-      setIsOpen(false);
-      form.reset();
+      setIsOpen(false)
+      form.reset()
     } catch (error) {
-      
-      toast.error(error.message);
-    }
-    finally{
+      toast.error(error.message)
+    } finally {
       setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className="flex justify-between m-2">
@@ -114,10 +112,9 @@ export default function KanbanHeader() {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger onClick={() => setIsOpen(true)}>
+        <DialogTrigger asChild onClick={() => setIsOpen(true)}>
           <Button variant="outline">
-             <Plus className="h-4" />
-
+            <Plus className="h-4" />
             Create Task
           </Button>
         </DialogTrigger>
@@ -202,16 +199,16 @@ export default function KanbanHeader() {
               </div>
               <DialogFooter asChild>
                 <Button type="submit" disabled={isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                
-                Save changes
-                
-              </Button>
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Save changes
+                </Button>
               </DialogFooter>
             </form>
           </Form>
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }
