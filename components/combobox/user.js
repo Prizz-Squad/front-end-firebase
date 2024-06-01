@@ -51,10 +51,10 @@ export function UserCombobox({ userId, onSelect, onlyEmployee }) {
           <CommandEmpty>No framework found.</CommandEmpty>
           <CommandGroup>
             <CommandList>
-              {finalData.map((framework) => (
+              {finalData.map((user) => (
                 <CommandItem
-                  key={framework.id}
-                  value={framework.id}
+                  key={user.uid}
+                  value={user.uid}
                   onSelect={(currentValue) => {
                     onSelect(currentValue === userId ? "" : currentValue)
                     setOpen(false)
@@ -63,10 +63,10 @@ export function UserCombobox({ userId, onSelect, onlyEmployee }) {
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      userId === framework.id ? "opacity-100" : "opacity-0"
+                      userId === user.uid ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {framework.email}
+                  {user.email}
                 </CommandItem>
               ))}
             </CommandList>
