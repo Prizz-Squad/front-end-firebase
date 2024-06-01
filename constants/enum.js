@@ -1,4 +1,8 @@
-export const DEPARTMENTS = ["DESING", "CAPTION", "SCHEDULE"]
+export const DEPARTMENTS = {
+  DESIGN: "DESIGN",
+  CAPTION: "CAPTION",
+  SCHEDULE: "SCHEDULE",
+}
 
 export const COLUMNS = {
   TODO: "TODO",

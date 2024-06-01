@@ -14,30 +14,22 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react"
 import { Badge } from "../ui/badge"
+import { DEPARTMENTS } from "@/constants/enum"
 
 export function DepsMultiPicker() {
-  const [showStatusBar, setShowStatusBar] = React.useState(true)
-  const [showActivityBar, setShowActivityBar] = React.useState(false)
-  const [showPanel, setShowPanel] = React.useState(false)
+  const [checkedDeps, setCheckedDeps] = React.useState([])
 
-  const ITEMS = [
-    {
-      label: "Status Bar",
-      checked: showStatusBar,
-      onCheckedChange: setShowStatusBar,
+  const ITEMS = Object.keys(DEPARTMENTS).map((key) => ({
+    label: DEPARTMENTS[key],
+    checked: checkedDeps.includes(DEPARTMENTS[key]),
+    onCheckedChange: (checked) => {
+      if (checked) {
+        setCheckedDeps((prev) => [...prev, DEPARTMENTS[key]])
+      } else {
+        setCheckedDeps((prev) => prev.filter((dep) => dep !== DEPARTMENTS[key]))
+      }
     },
-    {
-      label: "Activity Bar",
-      checked: showActivityBar,
-      onCheckedChange: setShowActivityBar,
-      disabled: true,
-    },
-    {
-      label: "Panel",
-      checked: showPanel,
-      onCheckedChange: setShowPanel,
-    },
-  ]
+  }))
 
   const atLeastOneChecked = ITEMS.some((item) => item.checked)
 
