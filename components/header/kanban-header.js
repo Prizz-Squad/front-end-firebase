@@ -34,6 +34,7 @@ import { createTask } from "@/db/collections/task"
 import { userId } from "@/dummy-data/users"
 import { toast } from "sonner"
 import { SelectGroup } from "@radix-ui/react-select"
+import { COLUMNS, DEPARTMENTSENUM } from "@/constants/enum"
 
 const TaskSchema = z.object({
   name: z.string(),
@@ -43,12 +44,31 @@ const TaskSchema = z.object({
 
 export default function KanbanHeader() {
 
-  const [priority,setPriority] = useState()
+  const defaultCols = [
+    {
+      title: "Design",
+      variable: DEPARTMENTSENUM.DESIGN
+    },
+    {
+      title: "Caption",
+      variable: DEPARTMENTSENUM.CAPTION
+    },
+    {
+      title: "Schedule",
+      variable: DEPARTMENTSENUM.SCHEDULE
+    },
+  ]
+
+
+  const [priority,setPriority] = useState();
+  const [department,setDepartment] = useState();
 
 
   const onChangePriority = (value) => {
     setPriority((value))
-    console.log(priority,"pri")
+  }
+  const onChangeDepartment = (value) => {
+    setDepartment((value))
   }
 
   const form = useForm({
@@ -56,8 +76,8 @@ export default function KanbanHeader() {
     defaultValues: {
       name: "",
       description: "",
-      columnId: "",
-      priority: ""
+      columnId: COLUMNS.TODO,
+
     },
   })
 
@@ -65,13 +85,17 @@ export default function KanbanHeader() {
     const validValues = {
       ...values,
       userId,
-      status: "todo", //TODO: what is the status
+      priority: priority,
+      department: department 
+
     }
     console.log(values,"values")
     console.log(validValues,"validValues")
 
     await createTask(validValues)
     toast("Task created.")
+    form.reset()
+    
   }
 
   return (
@@ -132,24 +156,26 @@ export default function KanbanHeader() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="columnId"
-                  render={({ field }) => (
-                    <FormItem className="grid grid-cols-4 items-center gap-4">
-                      <FormLabel>Department</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Design"
-                          className="col-span-3"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="col-span-4" />
-                    </FormItem>
-                  )}
-                />
+              <div className="w-full items-center flex flex-row justify-between">
+               <p className=" font-semibold text-sm">Department</p>
+               <Select onValueChange={onChangeDepartment}>
+                <SelectTrigger className="w-3/4">
+                  <SelectValue placeholder="Design" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                   {
+                    defaultCols.map((dt,i)=> (
+                      <SelectItem value={dt.variable} key={i}>{dt.title}</SelectItem>
+
+                    ))
+                   }
                
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+               </div>
+
                <div className="w-full items-center flex flex-row justify-between">
                <p className=" font-semibold text-sm">Piority</p>
                <Select onValueChange={onChangePriority}>
@@ -166,9 +192,11 @@ export default function KanbanHeader() {
               </Select>
                </div>
               </div>
-              <DialogFooter>
+             <div className="flex flex-row justify-end">
+             <DialogTrigger asChild>
                 <Button type="submit">Save changes</Button>
-              </DialogFooter>
+              </DialogTrigger>
+             </div>
             </form>
           </Form>
         </DialogContent>

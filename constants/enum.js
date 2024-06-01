@@ -5,3 +5,10 @@ export const COLUMNS = {
   IN_PROGRESS: "IN_PROGRESS",
   DONE: "DONE",
 }
+
+
+export const DEPARTMENTSENUM= {
+  DESIGN: "DESIGN",
+  CAPTION: "CAPTION",
+  SCHEDULE: "SCHEDULE",
+}
