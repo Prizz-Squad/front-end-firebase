@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   LineChart,
   ListFilter,
+  Mail,
   MoreVertical,
   Package,
   Package2,
@@ -194,6 +195,22 @@ export default function Sidebar() {
             </TooltipTrigger>
             <TooltipContent side="right">Users</TooltipContent>
           </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/mail"
+                className={`${
+                  router.pathname && router.pathname === "/mail"
+                    ? " dark:text-black text-accent-foreground bg-gray-100"
+                    : " text-muted-foreground"
+                } flex h-9 w-9  items-center justify-center rounded-lg  transition-colors hover:text-foreground md:h-8 md:w-8`}
+              >
+                <Mail className="h-5 w-5" />
+                <span className="sr-only">Mail</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">Mail</TooltipContent>
+          </Tooltip>
         </nav>
         <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
           <Tooltip>
@@ -251,6 +268,13 @@ export default function Sidebar() {
               >
                 <UserRound className="h-5 w-5" />
                 Users
+              </Link>
+              <Link
+                href="/mail"
+                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+              >
+                <UserRound className="h-5 w-5" />
+                Mail
               </Link>
               <Link
                 href="/settings"
@@ -320,13 +344,6 @@ export default function Sidebar() {
                   ))}
                 </ul>
               </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/docs" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Documentation
-                </NavigationMenuLink>
-              </Link>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
