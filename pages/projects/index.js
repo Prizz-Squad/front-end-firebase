@@ -48,21 +48,22 @@ export default function UsersPage() {
   const [isOpen, setIsOpen] = useState()
   const [isLoading, setIsLoading] = useState()
 
-  const [_data, setdata] = useState([])
+  const { data: usersList } = useUserContext()
+
   const { data, addNewProject, triggerRefetch } = useProjectContext()
-  const {userId} = useUserContext()
+  const { userId } = useUserContext()
 
-  const [name, setName] = useState("")
-  const [description, setDescription] = useState("")
-
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const mappedData = data.map((item) => ({
+    ...item,
+    _userName: usersList.find((user) => user.uid === item.userId)?.email,
+  }))
 
   const form = useForm({
     resolver: zodResolver(ProjectSchema),
     defaultValues: {
       name: "",
       description: "",
-      userId: ""
+      userId: "",
     },
   })
 
@@ -181,7 +182,7 @@ export default function UsersPage() {
           </DialogContent>
         </Dialog>
       </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={mappedData} />
     </div>
   )
 }
