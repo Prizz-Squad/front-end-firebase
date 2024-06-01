@@ -106,11 +106,21 @@ export function KanbanBoard({ cols = defaultCols }) {
 
   const filteredTasks = useMemo(() => {
     const shouldMatchDeps = urlsDepsArray.length > 0
+    const shouldMatchEmployee = selectedEmployee.length > 0
     return tasks.filter((task) => {
       const nameMatch = task.name
         ?.toLowerCase()
         .includes(globalFilter.toLowerCase())
       const depsMatch = urlsDepsArray.includes(task.department)
+
+      const employeeMatch = selectedEmployee.includes(task.userId)
+
+      if (shouldMatchEmployee) {
+        return shouldMatchDeps
+          ? nameMatch && depsMatch && employeeMatch
+          : nameMatch && employeeMatch
+      }
+
       return shouldMatchDeps ? nameMatch && depsMatch : nameMatch
     })
   }, [tasks, urlsDepsArray, globalFilter])
