@@ -1,22 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { useUserContext } from '../context/user'
+import React, { useEffect, useState } from "react"
+import { useUserContext } from "../context/user"
 
-const Wrapper = ({requiredRight,children}) => {
-  
-    const [hasPermission,setHasPermission] = useState()
-    const {data,user} = useUserContext()
-    
-    const userData = data.find((element) => element.uid === user.uid)
+const Wrapper = ({ requiredRight, children }) => {
+  const [hasPermission, setHasPermission] = useState()
+  const { data, userId } = useUserContext()
 
-    
-    useEffect(() => {
-        const hasPermission = requiredRight.includes(userData?.role)
-        setHasPermission(hasPermission)
-    }, [userData])
+  const userData = data.find((element) => element.uid === userId)
 
-    return hasPermission ? children : "" 
-    
-    
+  useEffect(() => {
+    const hasPermission = requiredRight.includes(userData?.role)
+    setHasPermission(hasPermission)
+  }, [userData])
+
+  return hasPermission ? children : ""
 }
 
 export default Wrapper
