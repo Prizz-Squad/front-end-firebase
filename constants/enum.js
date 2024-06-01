@@ -1,0 +1,1 @@
+export const DEPARTMENTS = ["DESING", "CAPTION", "SCHEDULE"]
