@@ -9,7 +9,6 @@ const UserCtx = createContext()
 export const UserCtxProvider = ({ children }) => {
   const router = useRouter()
   const [user, setUser] = useState(null)
-  console.log(user)
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       setUser(user)
@@ -25,7 +24,11 @@ export const UserCtxProvider = ({ children }) => {
     })
   }, [])
 
-  return <UserCtx.Provider value={{}}>{children}</UserCtx.Provider>
+  return (
+    <UserCtx.Provider value={{ user, userId: user?.uid }}>
+      {children}
+    </UserCtx.Provider>
+  )
 }
 
 export const useUserContext = () => {

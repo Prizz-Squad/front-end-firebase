@@ -43,10 +43,11 @@ import {
 import { toBase64 } from "@/utils/files"
 import { toast } from "sonner"
 import { useTaskContext } from "../context/tasks"
-import { changeTaskColId } from "@/db/collections/task"
+import { changeTaskColId, toggleIsTaskCompleted } from "@/db/collections/task"
 import { createComment, getCommentsSnapshot } from "@/db/collections/comments"
 import { Checkbox } from "../ui/checkbox"
 import { COLUMNS } from "@/constants/enum"
+import { DepsMultiPicker } from "../dropdown/deps-multi-picker"
 
 const defaultCols = [
   {
@@ -198,12 +199,15 @@ export function KanbanBoard({ cols = defaultCols }) {
 
   return (
     <>
-      <Input
-        placeholder="Start typing to filter..."
-        value={globalFilter}
-        onChange={(event) => setGlobalFilter(event.target.value)}
-        className="max-w-sm my-4"
-      />
+      <div className="flex items-center gap-4">
+        <Input
+          placeholder="Start typing to filter..."
+          value={globalFilter}
+          onChange={(event) => setGlobalFilter(event.target.value)}
+          className="max-w-sm my-4"
+        />
+        <DepsMultiPicker />
+      </div>
       <DndContext
         accessibility={{
           announcements,
@@ -353,6 +357,7 @@ const TaskDialog = ({ task, show, setShow }) => {
   const fileInput = useRef(null)
   const [inputValue, setInputValue] = useState("")
   const [comments, setComments] = useState([])
+  const [isCompleted, setIsCompleted] = useState(task?.isCompleted || false)
 
   const handleButtonClick = () => {
     fileInput.current.click()
@@ -368,12 +373,10 @@ const TaskDialog = ({ task, show, setShow }) => {
 
   const [editModeCommentId, setEditModeCommentId] = useState("")
 
-  console.log("Task", task)
   useEffect(() => {
     if (!task) return
     getCommentsSnapshot(
       (comments) => {
-        console.log("Comments", comments)
         setComments(comments)
       },
       { taskId: task.id }
@@ -457,7 +460,6 @@ const TaskDialog = ({ task, show, setShow }) => {
                           onKeyDown={(e) => {
                             const { value } = e.target
                             if (e.key !== "Enter" || !value) return
-                            console.log("Enter key pressed")
                             setEditModeCommentId("")
                           }}
                         />
@@ -497,7 +499,6 @@ const TaskDialog = ({ task, show, setShow }) => {
                   onKeyDown={(e) => {
                     const { value } = e.target
                     if (e.key !== "Enter" || !value) return
-                    console.log("Enter key pressed")
                     handleCreateComment({ text: value })
                     setInputValue("")
                   }}
@@ -510,9 +511,20 @@ const TaskDialog = ({ task, show, setShow }) => {
         <div className="flex flex-col flex-1 justify-around">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <Checkbox id="terms" />
+              <Checkbox
+                id="isCompleted"
+                onCheckedChange={(checked) => {
+                  try {
+                    setIsCompleted(checked)
+                    toggleIsTaskCompleted(task.id, checked)
+                  } catch (error) {
+                    console.error(error)
+                  }
+                }}
+                checked={isCompleted}
+              />
               <label
-                htmlFor="terms"
+                htmlFor="isCompleted"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Mark as done

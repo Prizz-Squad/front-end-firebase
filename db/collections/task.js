@@ -42,6 +42,10 @@ export const changeTaskColId = async (id, columnId) => {
   await updateDoc(doc(coll, id), { columnId })
 }
 
+export const toggleIsTaskCompleted = async (id, isCompleted) => {
+  await updateDoc(doc(coll, id), { isCompleted })
+}
+
 export const getTasksSnapshot = async (callback) => {
   onSnapshot(coll, (snapshot) => {
     const data = snapshot.docs.map((doc) => ({
