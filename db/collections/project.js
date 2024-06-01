@@ -6,6 +6,7 @@ import {
   doc,
   getDocs,
   setDoc,
+  updateDoc,
 } from "firebase/firestore"
 
 const coll = collection(db, "projects")
@@ -29,5 +30,5 @@ export const deleteProject = async (id) => {
 }
 
 export const updateProject = async (id, project) => {
-  await setDoc(doc(coll, id), project)
+  await updateDoc(doc(coll, id), project)
 }

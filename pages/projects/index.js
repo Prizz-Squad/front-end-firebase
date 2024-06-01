@@ -22,7 +22,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useEffect, useState } from "react"
-import { userId } from "@/dummy-data/users"
 import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -38,6 +37,7 @@ import {
 import { createProject, getProjects } from "@/db/collections/project"
 import { useProjectContext } from "@/components/context/project"
 import { Loader2, Plus } from "lucide-react"
+import { useUserContext } from "@/components/context/user"
 
 export const ProjectSchema = z.object({
   name: z.string().nonempty("Name is required"),
@@ -50,6 +50,7 @@ export default function UsersPage() {
 
   const [_data, setdata] = useState([])
   const { data, addNewProject, triggerRefetch } = useProjectContext()
+  const {userId} = useUserContext()
 
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
@@ -61,6 +62,7 @@ export default function UsersPage() {
     defaultValues: {
       name: "",
       description: "",
+      userId: ""
     },
   })
 
