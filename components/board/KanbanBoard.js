@@ -496,11 +496,14 @@ const TaskDialog = ({ task, show, setShow }) => {
     )
   }, [task])
 
+
+
+
   const handleCreateComment = ({ text }) => {
     createComment({
       taskId: task.id,
       text,
-      userId: "shadcn",
+      userId: userId,
       date: new Date(),
     })
   }
@@ -534,6 +537,11 @@ const TaskDialog = ({ task, show, setShow }) => {
       toast.error("Priority has an error")
     }
   }
+
+
+
+
+
   return (
     <>
       <Dialog open={show} onOpenChange={setShow}>
@@ -614,11 +622,17 @@ const TaskDialog = ({ task, show, setShow }) => {
                     <Badge>History</Badge>
                   </div>
                 </div>
-                {comments.map((comment) => (
+                {comments.map((comment) => {
+                  
+                   const commentUser = data.find((element) => element.uid === comment.userId)
+                   return(
+                  
+                  
                   <div
                     key={comment.id}
                     className="flex justify-between items-center mt-4"
                   >
+
                     <div className="flex flex-row gap-2">
                       <Button
                         variant="outline"
@@ -627,14 +641,14 @@ const TaskDialog = ({ task, show, setShow }) => {
                       >
                         <Avatar>
                           <AvatarFallback className=" ring-2 ring-black p-4">
-                            {userName?.firstName?.charAt(0).toUpperCase()}
+                            {commentUser?.firstName?.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                       </Button>
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
                           <p className="font-semibold">
-                            {userName && userName.firstName}
+                            {commentUser && commentUser.firstName}
                           </p>
                           <span className="text-sm font-light">
                             {formatDistanceToNow(
@@ -690,7 +704,7 @@ const TaskDialog = ({ task, show, setShow }) => {
                       )}
                     </div>
                   </div>
-                ))}
+                )})}
                 <div className="mt-4 me-4 flex gap-x-4 flex-row">
                   <div>
                     <Avatar>
