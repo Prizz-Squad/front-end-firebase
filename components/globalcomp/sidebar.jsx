@@ -181,7 +181,7 @@ export default function Sidebar() {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="#"
+                href="/users"
                 className={`${
                   router.pathname && router.pathname === "/users"
                     ? " dark:text-black text-accent-foreground bg-gray-100"
@@ -246,7 +246,7 @@ export default function Sidebar() {
                 Projects
               </Link>
               <Link
-                href="#"
+                href="/users"
                 className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
               >
                 <UserRound className="h-5 w-5" />

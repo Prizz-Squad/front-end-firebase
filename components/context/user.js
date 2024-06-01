@@ -1,3 +1,4 @@
+import { getUsers } from "@/db/collections/user"
 import { auth } from "@/init/firebase"
 import { onAuthStateChanged } from "firebase/auth"
 import { useRouter } from "next/router"
@@ -9,6 +10,13 @@ const UserCtx = createContext()
 export const UserCtxProvider = ({ children }) => {
   const router = useRouter()
   const [user, setUser] = useState(null)
+  const [data, setData] = useState([])
+  const [refetch, setRefetch] = useState(false)
+
+  const triggerRefetch = () => {
+    setRefetch((prev) => !prev)
+  }
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       setUser(user)
@@ -24,8 +32,22 @@ export const UserCtxProvider = ({ children }) => {
     })
   }, [])
 
+  useEffect(() => {
+    if (!user) return
+    getUsers().then((users) => {
+      console.log("users", users)
+      setData(users)
+    })
+  }, [user])
+
+  const addNewUser = (newUser) => {
+    setData((prev) => [newUser, ...prev])
+  }
+
   return (
-    <UserCtx.Provider value={{ user, userId: user?.uid }}>
+    <UserCtx.Provider
+      value={{ user, userId: user?.uid, data, addNewUser, triggerRefetch }}
+    >
       {children}
     </UserCtx.Provider>
   )

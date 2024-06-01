@@ -1,4 +1,5 @@
 import { SignupForm } from "@/components/forms/signup"
+import { createUser } from "@/db/collections/user"
 import { auth } from "@/init/firebase"
 import { createUserWithEmailAndPassword } from "firebase/auth"
 import { useRouter } from "next/router"
@@ -14,6 +15,12 @@ export default function SignupPage() {
           try {
             await createUserWithEmailAndPassword(auth, email, password)
             router.push("/dashboard")
+
+            createUser({
+              uid: auth.currentUser.uid,
+              email,
+              createdAt: new Date().toISOString(),
+            })
           } catch (error) {
             console.error("Error creating user", error)
             toast.error("Error creating user")
