@@ -45,18 +45,20 @@ import { toast } from "sonner"
 import { useTaskContext } from "../context/tasks"
 import { changeTaskColId } from "@/db/collections/task"
 import { createComment, getCommentsSnapshot } from "@/db/collections/comments"
+import { Checkbox } from "../ui/checkbox"
+import { COLUMNS } from "@/constants/enum"
 
 const defaultCols = [
   {
-    id: "todo",
+    id: COLUMNS.TODO,
     title: "Todo",
   },
   {
-    id: "in-progress",
+    id: COLUMNS.IN_PROGRESS,
     title: "In progress",
   },
   {
-    id: "done",
+    id: COLUMNS.DONE,
     title: "Done",
   },
 ]
@@ -507,6 +509,15 @@ const TaskDialog = ({ task, show, setShow }) => {
 
         <div className="flex flex-col flex-1 justify-around">
           <div>
+            <div className="flex items-center space-x-2 mb-4">
+              <Checkbox id="terms" />
+              <label
+                htmlFor="terms"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Mark as done
+              </label>
+            </div>
             <div className="flex gap-2">
               <Select>
                 <SelectTrigger className="w-[180px]">
