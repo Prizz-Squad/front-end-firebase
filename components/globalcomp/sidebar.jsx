@@ -115,9 +115,9 @@ export default function Sidebar() {
     // Add more component objects as needed
   ]
 
-  const { user, data } = useUserContext()
+  const { user, data, userId } = useUserContext()
 
-  const username = data.find((element) => element.uid === user.uid)
+  const username = data.find((element) => element.uid === userId)
 
   const ListItem = React.forwardRef(function ListItem(
     { className, title, children, ...props },
