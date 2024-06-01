@@ -601,13 +601,19 @@ const TaskDialog = ({ task, show, setShow }) => {
                     className="flex justify-between items-center mt-4"
                   >
                     <div className="flex flex-row gap-2">
-                      <Avatar className="w-8 h-8">
-                        <AvatarImage
-                          src="https://github.com/shadcn.png"
-                          alt="@shadcn"
-                        />
-                        <AvatarFallback>CN</AvatarFallback>
-                      </Avatar>
+                    <Button
+              variant="outline"
+              size="icon"
+              className="overflow-hidden rounded-full hover:ring-1 hover:ring-black"
+            >
+                  <Avatar
+          >
+       
+            <AvatarFallback className=" ring-2 ring-black p-4">
+              {userName?.firstName?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+            </Button>
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
                           <p className="font-semibold">
@@ -669,13 +675,15 @@ const TaskDialog = ({ task, show, setShow }) => {
                   </div>
                 ))}
                 <div className="mt-4 me-4 flex gap-x-4 flex-row">
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
-                    />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
+                <div>
+                <Avatar
+          >
+        
+            <AvatarFallback className=" ring-2 ring-black p-4">
+              {userName?.firstName?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+                </div>
                   <Textarea
                     className="w-full h-8"
                     placeholder="Write a comment"
@@ -773,15 +781,15 @@ const TaskDialog = ({ task, show, setShow }) => {
               <div className="m-1">
                 <p className="font-bold text-xl mt-2">Details</p>
 
-                <div className="flex mt-4 flex-row justify-between items-center">
+                <div className="flex mt-4 flex-row  gap-x-4 justify-between items-center">
                   <p className="">Assigne</p>
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
-                    />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
+                  <Avatar
+          >
+        
+            <AvatarFallback className=" ring-2 ring-black p-4">
+              {userName?.firstName?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
                   <UserCombobox
                     onSelect={(newUserId) => {
                       console.log("newUserId", newUserId)
@@ -814,13 +822,13 @@ const TaskDialog = ({ task, show, setShow }) => {
                 </div>
                 <div className="flex mt-4 flex-row justify-between items-center">
                   <p className="">Reporter</p>
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
-                    />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>{" "}
+                  <Avatar
+          >
+        
+            <AvatarFallback className=" ring-2 ring-black p-4">
+              {userName?.firstName?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
                 </div>
               </div>
             </div>

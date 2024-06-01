@@ -32,6 +32,7 @@ import { useState } from "react"
 import { labels } from "@/constants/list"
 import { Avatar } from "@radix-ui/react-avatar"
 import { AvatarFallback, AvatarImage } from "../ui/avatar"
+import { useUserContext } from "../context/user"
 
 export function TaskCard({ task, isOverlay, onClick }) {
   const {
@@ -53,6 +54,13 @@ export function TaskCard({ task, isOverlay, onClick }) {
   })
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+
+  const { user,data } = useUserContext()
+
+
+
+  
+  const userName = data.find((element) => element.uid === user.uid)
 
   const style = {
     transition,
@@ -132,14 +140,15 @@ export function TaskCard({ task, isOverlay, onClick }) {
         <CardContent className="px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
           <div className="flex mt-4 flex-row justify-between items-center">
             <p className="">{task.description}</p>
-            <Avatar className="w-8 h-8">
-              <AvatarImage
-                className="rounded-full"
-                src="https://github.com/shadcn.png"
-                alt="@shadcn"
-              />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+           <div className=" aspect-square">
+           <Avatar
+          >
+        
+            <AvatarFallback className=" ring-1 ring-black p-4">
+              {userName?.firstName?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+           </div>
           </div>
         </CardContent>
       </Card>
