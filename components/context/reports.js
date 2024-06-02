@@ -50,7 +50,7 @@ export const ReportsCtxProvider = ({ children }) => {
       console.log("data", data)
       setResData(data)
     })
-  }, [employes])
+  }, [employes, dateFilter])
 
   const mappedData = resData.map((element) => {
     const user = employes.find((emp) => emp.uid === element.userId)
