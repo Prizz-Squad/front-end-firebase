@@ -170,9 +170,26 @@ function Dashboard() {
             </div>
           </div>
           <div>
-          <div>
-        <DataTable columns={columns} data={tasks} />
-      </div>
+            <div>
+              <Card x-chunk="dashboard-05-chunk-3">
+                <CardHeader className="pb-2">
+                  <CardDescription>Recent Tasks</CardDescription>
+                  <CardTitle className="text-2xl ">
+                    {tasks.length} tasks
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-xs text-muted-foreground mt-3">
+                    <DataTable
+                      columns={columns.slice(0, -1)}
+                      data={tasks}
+                      hideSearch
+                      hideFooter
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </Tabs>

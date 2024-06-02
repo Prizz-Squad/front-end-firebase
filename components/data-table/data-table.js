@@ -20,7 +20,7 @@ import { useState } from "react"
 import { Input } from "../ui/input"
 import { DataTablePagination } from "./pagination"
 
-export function DataTable({ columns, data, onDelete }) {
+export function DataTable({ columns, data, onDelete, hideFooter, hideSearch }) {
   const [sorting, setSorting] = useState([])
   const [columnFilters, setColumnFilters] = useState([])
   const [rowSelection, setRowSelection] = useState({})
@@ -52,14 +52,16 @@ export function DataTable({ columns, data, onDelete }) {
 
   return (
     <div>
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Start typing to filter..."
-          value={globalFilter}
-          onChange={(event) => setGlobalFilter(event.target.value)}
-          className="max-w-sm"
-        />
-      </div>
+      {!hideSearch && (
+        <div className="flex items-center py-4">
+          <Input
+            placeholder="Start typing to filter..."
+            value={globalFilter}
+            onChange={(event) => setGlobalFilter(event.target.value)}
+            className="max-w-sm"
+          />
+        </div>
+      )}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -110,9 +112,11 @@ export function DataTable({ columns, data, onDelete }) {
           </TableBody>
         </Table>
       </div>
-      <div className="mt-2">
-        <DataTablePagination table={table} />
-      </div>
+      {!hideFooter && (
+        <div className="mt-2">
+          <DataTablePagination table={table} />
+        </div>
+      )}
     </div>
   )
 }
