@@ -25,8 +25,13 @@ export const createTaskTrackHistory = async (values) => {
   await setDoc(docRef, values)
 }
 
-export const getUsersTaskHistory = async (userIds) => {
-  const q = query(coll, where("userId", "in", userIds))
+export const getUsersTaskHistory = async ({ userIds, startDate, endDate }) => {
+  const q = query(
+    coll,
+    where("userId", "in", userIds),
+    where("startAt", ">=", startDate),
+    where("endAt", "<=", endDate)
+  )
   const querySnapshot = await getDocs(q)
   const data = querySnapshot.docs.map((doc) => ({
     id: doc.id,

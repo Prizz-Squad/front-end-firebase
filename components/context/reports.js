@@ -7,14 +7,46 @@ const { createContext, useContext, useState, useEffect } = require("react")
 
 const ReportsCtx = createContext()
 
+const DATE_FILTERS = {
+  TODAY: "TODAY",
+  THIS_WEEK: "THIS_WEEK",
+  THIS_MONTH: "THIS_MONTH",
+}
+
 export const ReportsCtxProvider = ({ children }) => {
   const { employes } = useUserContext()
 
   const [resData, setResData] = useState([])
 
+  const [dateFilter, setDateFilter] = useState(DATE_FILTERS.TODAY)
+
+  const dateMap = {
+    [DATE_FILTERS.TODAY]: {
+      getStartDate: () => new Date().setHours(0, 0, 0, 0),
+      getEndDate: () => new Date().setHours(23, 59, 59, 999),
+    },
+    [DATE_FILTERS.THIS_WEEK]: {
+      getStartDate: () => new Date().setHours(0, 0, 0, 0),
+      getEndDate: () =>
+        new Date(
+          new Date().setDate(new Date().getDate() - new Date().getDay())
+        ).setHours(23, 59, 59, 999),
+    },
+    [DATE_FILTERS.THIS_MONTH]: {
+      getStartDate: () => new Date().setHours(0, 0, 0, 0),
+      getEndDate: () =>
+        new Date(new Date().setDate(1)).setHours(23, 59, 59, 999),
+    },
+  }
+
   useEffect(() => {
     if (!employes.length) return
-    getUsersTaskHistory(employes.map((emp) => emp.uid)).then((data) => {
+    const empIds = employes.map((emp) => emp.uid)
+    getUsersTaskHistory({
+      userIds: empIds,
+      startDate: new Date(dateMap[dateFilter].getStartDate()),
+      endDate: new Date(dateMap[dateFilter].getEndDate()),
+    }).then((data) => {
       console.log("data", data)
       setResData(data)
     })
@@ -51,10 +83,25 @@ export const ReportsCtxProvider = ({ children }) => {
     return acc
   }, [])
 
+  const setTodaysDateFilter = () => {
+    setDateFilter(DATE_FILTERS.TODAY)
+  }
+  const setThisWeekDateFilter = () => {
+    setDateFilter(DATE_FILTERS.THIS_WEEK)
+  }
+  const setThisMonthDateFilter = () => {
+    setDateFilter(DATE_FILTERS.THIS_MONTH)
+  }
+
   return (
     <ReportsCtx.Provider
       value={{
         mergedData,
+
+        dateFilter,
+        setTodaysDateFilter,
+        setThisWeekDateFilter,
+        setThisMonthDateFilter,
       }}
     >
       {children}

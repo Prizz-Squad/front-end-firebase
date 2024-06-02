@@ -7,6 +7,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   onSnapshot,
   query,
   setDoc,
@@ -102,4 +103,16 @@ export const addImagePostDateToTask = async ({ id, image, date }) => {
   const imageToDates = task.imageToDates || {}
   imageToDates[image] = date
   await updateDoc(doc(coll, id), { imageToDates })
+}
+
+export const getRecentTasksSnapshot = async (callback, { projectId }) => {
+  const qry = query(coll, where("projectId", "==", projectId), limit(10))
+  onSnapshot(qry, (snapshot) => {
+    const data = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+    callback(data)
+  })
+  return () => {}
 }
