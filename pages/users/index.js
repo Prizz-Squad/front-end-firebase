@@ -40,8 +40,8 @@ import { useProjectContext } from "@/components/context/project"
 import { Loader2, Plus } from "lucide-react"
 import { useUserContext } from "@/components/context/user"
 import { SignupForm } from "@/components/forms/signup"
-import { createUserWithEmailAndPassword } from "firebase/auth"
-import { auth } from "@/init/firebase"
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth"
+import { app, auth } from "@/init/firebase"
 import { createUser } from "@/db/collections/user"
 import { USERS } from "@/constants/enum"
 import { useRouter } from "next/router"
@@ -55,20 +55,18 @@ export default function UsersPage() {
   const [isOpen, setIsOpen] = useState()
   const [isLoading, setIsLoading] = useState()
 
-  const { data, addNewProject, triggerRefetch,userId } = useUserContext()
-  
+  const { data, addNewProject, triggerRefetch, userId } = useUserContext()
+
   const router = useRouter()
 
   useEffect(() => {
-  
     const user = data.find((element) => element.uid === userId)
-    
-    console.log(user,"useri")
-    if( user?.role === USERS.EMPLOYEE){
+
+    console.log(user, "useri")
+    if (user?.role === USERS.EMPLOYEE) {
       router.push("/dashboard")
     }
   }, [])
-  
 
   const [role, setRole] = useState("MANAGER")
 
@@ -112,12 +110,8 @@ export default function UsersPage() {
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <div className="flex gap-2">
             <DialogTrigger asChild onClick={() => setIsOpen(true)}>
-              <Button variant="outline">
-                Create User
-              </Button>
+              <Button variant="outline">Create User</Button>
             </DialogTrigger>
-
-         
           </div>
 
           <DialogContent className="sm:max-w-[425px]">
@@ -127,14 +121,19 @@ export default function UsersPage() {
                 setIsLoading(true)
                 try {
                   const { email, password, firstName, lastName } = data
-                  await createUserWithEmailAndPassword(auth, email, password)
+                  const tempAuth = getAuth(app)
+                  await createUserWithEmailAndPassword(
+                    tempAuth,
+                    email,
+                    password
+                  )
                   createUser({
                     uid: auth.currentUser.uid,
                     email,
                     createdAt: new Date().toISOString(),
                     firstName,
                     lastName,
-                    role
+                    role,
                   })
                   toast("User created successfully")
                   setIsOpen(false)
@@ -143,8 +142,7 @@ export default function UsersPage() {
                 } catch (error) {
                   console.error("Error creating user", error)
                   toast.error("Error creating user")
-                }
-                finally{
+                } finally {
                   setIsLoading(false)
                 }
               }}
@@ -154,8 +152,6 @@ export default function UsersPage() {
             />
           </DialogContent>
         </Dialog>
-
-      
       </div>
       <DataTable columns={columns} data={data} />
     </div>

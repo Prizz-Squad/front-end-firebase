@@ -70,8 +70,9 @@ import { ReportsCtxProvider, useReportsCtx } from "@/components/context/reports"
 import { useEffect, useState } from "react"
 import { getRecentTasksSnapshot } from "@/db/collections/task"
 import { useProjectContext } from "@/components/context/project"
+import { z } from "zod"
 
-const lastWeek = "2023-06-19"
+const lastWeekAmount = 1000
 function Dashboard() {
   const {
     mergedData,
@@ -79,6 +80,12 @@ function Dashboard() {
     setThisWeekDateFilter,
     setThisMonthDateFilter,
   } = useReportsCtx()
+
+  // const amountInPercentage =
+  const toal = mergedData.reduce((acc, curr) => acc + curr.hours, 0)
+
+  const closeAmountToLastWeek = Math.abs(toal - lastWeekAmount)
+  // console.log("closeAmountToLastWeek", closeAmountToLastWeek)
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40 p-6 gap-4">
@@ -92,7 +99,7 @@ function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
-              +25% from last week
+              {closeAmountToLastWeek.toFixed(2)} hours to last week
             </div>
           </CardContent>
           <CardFooter>
