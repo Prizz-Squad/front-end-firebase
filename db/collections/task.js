@@ -1,5 +1,6 @@
 import { db } from "../../init/firebase"
 import {
+  Timestamp,
   addDoc,
   collection,
   deleteDoc,
@@ -16,9 +17,8 @@ import {
 const coll = collection(db, "tasks")
 
 export const createTask = async (values) => {
-  console.log(values, "colletionvalue")
   const docRef = doc(coll)
-  await setDoc(docRef, values)
+  await setDoc(docRef, { ...values, createdAt: Timestamp.now() })
 }
 
 export const getTask = async (id) => {
@@ -73,7 +73,7 @@ export const getTasksSnapshot = async (callback, { projectId }) => {
 }
 
 export const changeTaskAssignee = async (id, assignee) => {
-  await updateDoc(doc(coll, id), { assignee })
+  await updateDoc(doc(coll, id), { assignee, createdAt: Timestamp.now() })
 }
 
 export const changeTaskDepartment = async (id, department) => {

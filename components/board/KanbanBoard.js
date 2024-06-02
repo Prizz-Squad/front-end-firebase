@@ -93,6 +93,7 @@ import { Timestamp } from "firebase/firestore"
 import Image from "next/image"
 import Wrapper from "../wrapper/wrapper"
 import { Calendar } from "../ui/calendar"
+import { createTaskTrackHistory } from "@/db/collections/task-track-history"
 
 const defaultCols = [
   {
@@ -860,6 +861,12 @@ const TaskDialog = ({ task, show, setShow }) => {
                           projectId: currentProjectId,
                           taskId: task.id,
                           newUserId,
+                        })
+                        createTaskTrackHistory({
+                          userId: task.assignee,
+                          taskId: task.id,
+                          startAt: task.createdAt,
+                          endAt: Timestamp.now(),
                         })
                       })
                     }}

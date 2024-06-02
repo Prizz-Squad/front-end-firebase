@@ -1,3 +1,4 @@
+import { USERS } from "@/constants/enum"
 import { getUsers } from "@/db/collections/user"
 import { auth } from "@/init/firebase"
 import { onAuthStateChanged } from "firebase/auth"
@@ -46,6 +47,8 @@ export const UserCtxProvider = ({ children }) => {
 
   const dbUser = data.find((element) => element.uid === user?.uid)
 
+  const employes = data.filter((element) => element.role === USERS.EMPLOYEE)
+
   return (
     <UserCtx.Provider
       value={{
@@ -55,6 +58,7 @@ export const UserCtxProvider = ({ children }) => {
         addNewUser,
         dbUser,
         triggerRefetch,
+        employes,
       }}
     >
       {children}
