@@ -71,18 +71,25 @@ export default function UsersPage() {
     try {
       const { email, password, firstName, lastName } = data
 
-      // Check if user is already authenticated
-      if (!auth.currentUser) {
-        // If not authenticated, create user with email and password
-        await createUserWithEmailAndPassword(auth, email, password)
+      const res = await fetch("/api/create-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+      console.log("res", res)
 
-        // If user is not already authenticated, sign in
-        await signInWithEmailAndPassword(auth, email, password)
+      if (!res.ok) {
+        throw new Error("Error creating user")
       }
+
+      const json = await res.json()
+      console.log("json", json)
 
       // Create user data in database
       createUser({
-        uid: auth.currentUser.uid,
+        uid: json.uid,
         email,
         createdAt: new Date().toISOString(),
         firstName,
