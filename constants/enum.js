@@ -11,6 +11,8 @@ export const COLUMNS = {
 }
 
 
+export const priorities = ["HIGH","MEDIUM","LOW"]
+
 export const DEPARTMENTSENUM= {
   DESIGN: "DESIGN",
   CAPTION: "CAPTION",

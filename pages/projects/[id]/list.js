@@ -1,4 +1,5 @@
 import { columns } from "@/components/columns/tasks-list"
+import { useTaskContext } from "@/components/context/tasks"
 import { DataTable } from "@/components/data-table/data-table"
 import KanbanHeader from "@/components/header/kanban-header"
 import { ProjectTabs } from "@/components/tabs/project-tabs"
@@ -787,12 +788,14 @@ const data = [
 ]
 
 export default function ProjectListPage() {
+  const { snapshotData: tasks, setSnapshotData: setTasks } = useTaskContext()
+
   return (
     <div className="ms-2">
       <KanbanHeader />
       <ProjectTabs />
       <div>
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={tasks} />
       </div>
     </div>
   )

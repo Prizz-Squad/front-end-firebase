@@ -13,6 +13,12 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 import {
   DndContext,
@@ -469,7 +475,8 @@ const TaskDialog = ({ task, show, setShow }) => {
 
   const [scheduleDialogImgIdx, setScheduleDialogImgIdx] = useState(-1)
 
-  const userName = data.find((element) => element.uid === task?.assignee)
+  const userNameAssigned = data.find((element) => element.uid === task?.assignee)
+  const userNameReporter = data.find((element) => element.uid === task?.userId)
 
   const handleButtonClick = () => {
     fileInput.current.click()
@@ -642,14 +649,7 @@ const TaskDialog = ({ task, show, setShow }) => {
               )}
               <div className="mb-2">
                 <h4 className="text-sm font-semibold mt-2">Comments</h4>
-                <div className="flex gap-x-2 mt-4 items-center flex-row">
-                  <p className="">Show:</p>
-                  <div className="flex flex-row gap-x-2">
-                    <Badge>All</Badge>
-                    <Badge>Comments</Badge>
-                    <Badge>History</Badge>
-                  </div>
-                </div>
+               
                 {comments.map((comment) => {
                   const commentUser = data.find(
                     (element) => element.uid === comment.userId
@@ -665,6 +665,7 @@ const TaskDialog = ({ task, show, setShow }) => {
                           size="icon"
                           className="overflow-hidden rounded-full hover:ring-1 hover:ring-black"
                         >
+                        
                           <Avatar>
                             <AvatarFallback className=" ring-2 ring-black p-4">
                               {commentUser?.firstName?.charAt(0).toUpperCase()}
@@ -736,7 +737,7 @@ const TaskDialog = ({ task, show, setShow }) => {
                   <div>
                     <Avatar>
                       <AvatarFallback className=" ring-2 ring-black p-4">
-                        {userName?.firstName?.charAt(0).toUpperCase()}
+                        {userNameAssigned?.firstName?.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </div>
@@ -842,7 +843,7 @@ const TaskDialog = ({ task, show, setShow }) => {
                   <p className="">Assigne</p>
                   <Avatar>
                     <AvatarFallback className=" ring-2 ring-black p-4">
-                      {userName?.firstName?.charAt(0).toUpperCase()}
+                      {userNameAssigned?.firstName?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <UserCombobox
@@ -866,19 +867,12 @@ const TaskDialog = ({ task, show, setShow }) => {
                     onlyEmployee
                   />
                 </div>
-                <div className="flex mt-4  flex-row justify-between items-center">
-                  <p className="mr-4">Label</p>
-                  <div className="flex flex-row gap-x-2 flex-wrap">
-                    <Badge>Bug</Badge>
-                    <Badge>Feature</Badge>
-                    <Badge>Documentation</Badge>
-                  </div>
-                </div>
-                <div className="flex mt-4 flex-row justify-between items-center">
+             
+                <div className="flex mt-8 flex-row justify-between items-center">
                   <p className="">Reporter</p>
                   <Avatar>
                     <AvatarFallback className=" ring-2 ring-black p-4">
-                      {userName?.firstName?.charAt(0).toUpperCase()}
+                      {userNameReporter?.firstName?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </div>
@@ -969,7 +963,7 @@ const TaskDialog = ({ task, show, setShow }) => {
         open={showCarouselIdx !== -1}
         onOpenChange={() => setShowCarouselIdx(-1)}
       >
-        <DialogContent >
+        <DialogContent className='max-w-fit' >
           <Carousel className="w-full p-4  mx-auto">
             <CarouselContent className=''>
               {Array.from({ length: 5 }).map((_, index) => (
