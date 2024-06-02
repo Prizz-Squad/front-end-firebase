@@ -71,6 +71,7 @@ import { useEffect, useState } from "react"
 import { getRecentTasksSnapshot } from "@/db/collections/task"
 import { useProjectContext } from "@/components/context/project"
 
+const lastWeek = "2023-06-19"
 function Dashboard() {
   const {
     mergedData,
@@ -85,7 +86,9 @@ function Dashboard() {
         <Card x-chunk="dashboard-05-chunk-1">
           <CardHeader className="pb-2">
             <CardDescription>This Week</CardDescription>
-            <CardTitle className="text-4xl">$1,329</CardTitle>
+            <CardTitle className="text-4xl">
+              {mergedData.reduce((acc, curr) => acc + curr.tasks, 0)} tasks
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
@@ -99,7 +102,10 @@ function Dashboard() {
         <Card x-chunk="dashboard-05-chunk-2">
           <CardHeader className="pb-2">
             <CardDescription>This Month</CardDescription>
-            <CardTitle className="text-4xl">$5,329</CardTitle>
+            <CardTitle className="text-4xl">
+              {mergedData.reduce((acc, curr) => acc + curr.hours, 0).toFixed(2)}{" "}
+              hours
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-xs text-muted-foreground">
@@ -156,9 +162,7 @@ function Dashboard() {
             <Card x-chunk="dashboard-05-chunk-3">
               <CardHeader className="px-7">
                 <CardTitle>Tasks</CardTitle>
-                <CardDescription>
-                  Recent orders from your store.
-                </CardDescription>
+                <CardDescription>Recent tasks.</CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
