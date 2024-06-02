@@ -138,7 +138,7 @@ export function KanbanBoard({ cols = defaultCols }) {
         .includes(globalFilter.toLowerCase())
       const depsMatch = urlsDepsArray.includes(task.department)
 
-      const employeeMatch = selectedEmployee.includes(task.userId)
+      const employeeMatch = selectedEmployee.includes(task.assignee)
 
       if (shouldMatchEmployee) {
         return shouldMatchDeps
@@ -976,9 +976,9 @@ const TaskDialog = ({ task, show, setShow }) => {
         open={showCarouselIdx !== -1}
         onOpenChange={() => setShowCarouselIdx(-1)}
       >
-        <DialogContent>
-          <Carousel className="w-full max-w-xs mx-auto">
-            <CarouselContent>
+        <DialogContent >
+          <Carousel className="w-full p-4  mx-auto">
+            <CarouselContent className=''>
               {Array.from({ length: 5 }).map((_, index) => (
                 <CarouselItem key={index}>
                   <div className="p-1">

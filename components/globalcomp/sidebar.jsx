@@ -302,7 +302,6 @@ export default function Sidebar() {
           <NavigationMenuList>
             {router.pathname !== "/login" && router.pathname !== "/signup" && (
               <NavigationMenuItem>
-                <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                     <li className="row-span-3">
@@ -339,33 +338,12 @@ export default function Sidebar() {
                 </NavigationMenuContent>
               </NavigationMenuItem>
             )}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Components</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 hover p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                  {components.map((component) => (
-                    <li
-                      className="hover:bg-gray-100 p-2 cursor-pointer rounded-lg"
-                      key={component.title}
-                      title={component.title}
-                      href={component.href}
-                    >
-                      {component.description}
-                    </li>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
+          
           </NavigationMenuList>
         </NavigationMenu>
 
         <div className="relative ml-auto flex-1 md:grow-0">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search..."
-            className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
-          />
+          
         </div>
         <ModeToggle />
         <DropdownMenu>
