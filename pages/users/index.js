@@ -52,23 +52,60 @@ export const ProjectSchema = z.object({
 })
 
 export default function UsersPage() {
-  const [isOpen, setIsOpen] = useState()
-  const [isLoading, setIsLoading] = useState()
+  const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [role, setRole] = useState("MANAGER")
+  const router = useRouter()
 
   const { data, addNewProject, triggerRefetch, userId } = useUserContext()
 
-  const router = useRouter()
-
   useEffect(() => {
     const user = data.find((element) => element.uid === userId)
-
-    console.log(user, "useri")
     if (user?.role === USERS.EMPLOYEE) {
       router.push("/dashboard")
     }
-  }, [])
+  }, [data, userId, router])
 
-  const [role, setRole] = useState("MANAGER")
+  const handleCreateUser = async (data) => {
+    setIsLoading(true)
+    try {
+      const { email, password, firstName, lastName } = data
+
+      // Check if user is already authenticated
+      if (!auth.currentUser) {
+        // If not authenticated, create user with email and password
+        await createUserWithEmailAndPassword(auth, email, password)
+
+        // If user is not already authenticated, sign in
+        await signInWithEmailAndPassword(auth, email, password)
+      }
+
+      // Create user data in database
+      createUser({
+        uid: auth.currentUser.uid,
+        email,
+        createdAt: new Date().toISOString(),
+        firstName,
+        lastName,
+        role,
+      })
+
+      toast("User created successfully")
+
+      setIsOpen(false)
+      setIsLoading(false)
+      triggerRefetch()
+
+      // Redirect user if needed
+      const user = data.find((element) => element.uid === userId)
+      if (user?.role === USERS.EMPLOYEE) {
+        router.push("/dashboard")
+      }
+    } catch (error) {
+      console.error("Error creating user", error)
+      setIsLoading(false)
+    }
+  }
 
   const form = useForm({
     resolver: zodResolver(ProjectSchema),
@@ -100,6 +137,7 @@ export default function UsersPage() {
       setIsLoading(false)
     }
   }
+
   return (
     <div className="container mx-auto py-10">
       <div className="flex justify-between">
@@ -116,36 +154,7 @@ export default function UsersPage() {
 
           <DialogContent className="sm:max-w-[425px]">
             <SignupForm
-              onSubmit={async (data) => {
-                console.log("data", data)
-                setIsLoading(true)
-                try {
-                  const { email, password, firstName, lastName } = data
-                  const tempAuth = getAuth(app)
-                  await createUserWithEmailAndPassword(
-                    tempAuth,
-                    email,
-                    password
-                  )
-                  createUser({
-                    uid: auth.currentUser.uid,
-                    email,
-                    createdAt: new Date().toISOString(),
-                    firstName,
-                    lastName,
-                    role,
-                  })
-                  toast("User created successfully")
-                  setIsOpen(false)
-                  setIsLoading(false)
-                  triggerRefetch()
-                } catch (error) {
-                  console.error("Error creating user", error)
-                  toast.error("Error creating user")
-                } finally {
-                  setIsLoading(false)
-                }
-              }}
+              onSubmit={handleCreateUser}
               setRole={setRole}
               role={role}
               isLoading={isLoading}

@@ -39,9 +39,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Mail } from "@/components/mail/_data"
+import { useUserContext } from "../context/user"
 
 export function MailDisplay({ mail }) {
   const today = new Date()
+
+  const {data} = useUserContext()
+
+  const userDefined = data.find((element)=> element.uid === mail?.newUserId)
+   
+
+  console.log(mail)
 
   return (
     <div className="flex h-full flex-col">
@@ -196,7 +204,7 @@ export function MailDisplay({ mail }) {
               </Avatar>
               <div className="grid gap-1">
                 <div className="font-semibold">{mail.name}</div>
-                <div className="line-clamp-1 text-xs">{mail.subject}</div>
+                <div className="line-clamp-1 text-xs">{mail.subject}</div>  
                 <div className="line-clamp-1 text-xs">
                   <span className="font-medium">Reply-To:</span> {mail.email}
                 </div>

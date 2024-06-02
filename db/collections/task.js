@@ -44,6 +44,13 @@ export const deleteTask = async (id) => {
 export const updateTask = async (id, project) => {
   await setDoc(doc(coll, id), project)
 }
+export const updateTask2 = async (id, jsonTask) => {
+  console.log(jsonTask,"jsonTask")
+  const {columnId,priority,name} = jsonTask
+  await updateDoc(doc(coll, id), {columnId})
+  await updateDoc(doc(coll, id), {priority})
+  await updateDoc(doc(coll, id), {name})
+}
 
 export const changeTaskColId = async (id, columnId) => {
   await updateDoc(doc(coll, id), { columnId })

@@ -850,10 +850,13 @@ const TaskDialog = ({ task, show, setShow }) => {
                   <UserCombobox
                     onSelect={(newUserId) => {
                       changeTaskAssignee(task.id, newUserId).then(() => {
+
+                        const username = data.find((element) => element.uid  === newUserId)
+
                         toast("Assignee changed")
                         createNotification({
                           subject: "Task Assignee Changed",
-                          text: `Task ${task.name} has been assigned to ${newUserId} by ${user.email}`, //${userId}
+                          text: `Task ${task.name} has been assigned to ${username.firstName} by ${user.email}`, //${userId}
                           name: user.firstName || user.email,
                           email: user.email,
                           labels: ["Assignee"],
