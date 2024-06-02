@@ -606,7 +606,7 @@ const TaskDialog = ({ task, show, setShow }) => {
                           key={image}
                           className="flex flex-col items-center gap-1"
                         >
-                          <Image
+                          <img
                             key={image}
                             src={image}
                             alt="task image"
