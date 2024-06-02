@@ -4,17 +4,13 @@ import { TasksListRowActions } from "../row-actions.js/tasks-list"
 import { Badge } from "../ui/badge"
 import { Checkbox } from "../ui/checkbox"
 
+
+
+///Dont show the row actions
+
 export const columns = [
  
-  {
-    accessorKey: "userId",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Task ID" />
-    ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("userId")}</div>,
-    enableSorting: false,
-    enableHiding: false,
-  },
+
   {
     accessorKey: "name",
     header: ({ column }) => (
