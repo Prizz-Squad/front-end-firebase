@@ -5,12 +5,7 @@ export const ProjectTabs = () => {
   const router = useRouter()
 
   const tabs = [
-    {
-      id: "summary",
-      label: "Summary",
-      onClick: () => router.push("/projects/1/summary"),
-      path: "/projects/[id]/summary",
-    },
+   
     {
       id: "board",
       label: "Board",
