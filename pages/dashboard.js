@@ -70,10 +70,37 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { CardsStats } from "@/components/charts/chart"
+import { ReportsCtxProvider, useReportsCtx } from "@/components/context/reports"
 
-export default function Dashboard() {
+function Dashboard() {
+  const { mergedData } = useReportsCtx()
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
+      <div className="grid grid-cols-2 gap-6">
+        <CardsStats
+          data={mergedData}
+          xDataKey={"user.firstName"}
+          yDataKey={"hours"}
+          title={"Time spent"}
+          subTitle={`${Math.floor(
+            mergedData.reduce((acc, curr) => acc + curr.hours, 0)
+          )} hours`}
+          description={"Time spent by each user"}
+        />
+        <CardsStats
+          data={mergedData}
+          xDataKey={"user.firstName"}
+          yDataKey={"tasks"}
+          title={"Completed tasks"}
+          subTitle={`${mergedData.reduce(
+            (acc, curr) => acc + curr.tasks,
+            0
+          )} tasks`}
+          description={"Tasks completed by each user"}
+        />
+      </div>
       <div className="">
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
           <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
@@ -511,5 +538,13 @@ export default function Dashboard() {
         </main>
       </div>
     </div>
+  )
+}
+
+export default function DashBoardPage() {
+  return (
+    <ReportsCtxProvider>
+      <Dashboard />
+    </ReportsCtxProvider>
   )
 }

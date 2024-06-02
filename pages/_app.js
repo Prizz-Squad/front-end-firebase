@@ -1,5 +1,6 @@
 import { NotificationCtxProvider } from "@/components/context/notifications"
 import { ProjectCtxProvider } from "@/components/context/project"
+import { ReportsCtxProvider } from "@/components/context/reports"
 import { TaskCtxProvider } from "@/components/context/tasks"
 import { UserCtxProvider } from "@/components/context/user"
 import Sidebar from "@/components/globalcomp/sidebar"
